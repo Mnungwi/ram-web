@@ -1,0 +1,283 @@
+<div class="home-page-container fade-in-page">
+  
+  <!-- HERO SLIDER -->
+  <section class="hero-slider-section position-relative">
+    <div class="slides-container" style="height: 90vh; overflow: hidden;">
+      <div *ngFor="let s of slides; let i = index" 
+           class="hero-slide-item position-absolute w-100 h-100 d-flex align-items-center"
+           [class.active]="activeSlide() === i"
+           [style.background-image]="'url(' + resolveImage(s.bg) + ')'">
+        
+        <!-- Premium Branded Gradient & Technical Grid Overlay -->
+        <div class="hero-slide-overlay"></div>
+        
+        <div class="container text-white position-relative" style="z-index: 10;">
+          <div class="row">
+            <div class="col-lg-8 animate-text-container">
+              <span class="badge bg-primary text-uppercase px-3 py-2 mb-3 fw-bold tracking-wider slide-up-in" style="font-size:12px">{{ ts.get('home.slider_badge') }}</span>
+              <h1 class="display-3 fw-800 mb-3 slide-up-in" style="line-height: 1.1; font-family: var(--font-family-title);">{{s.title}}</h1>
+              <p class="fs-5 text-light mb-5 slide-up-in" style="max-width: 600px; font-weight: 300;">{{s.subtitle}}</p>
+              <div class="d-flex gap-3 slide-up-in">
+                <a [routerLink]="s.primaryLink" class="btn btn-primary btn-lg rounded-pill px-4 shadow-lg">
+                  {{ s.primaryBtn === 'Explore Services' ? ts.get('home.btn_services') : (s.primaryBtn === 'View Portfolio' ? ts.get('home.btn_portfolio') : s.primaryBtn) }}
+                </a>
+                <a [routerLink]="s.secondaryLink" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                  {{ s.secondaryBtn === 'Contact Us' ? ts.get('home.btn_contact') : (s.secondaryBtn === 'Careers' ? ts.get('home.btn_careers') : s.secondaryBtn) }}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Navigation Arrows -->
+    <button class="slider-arrow prev-arrow btn border-0 text-white position-absolute start-0 top-50 translate-middle-y z-3 ms-3" 
+            (click)="prevSlide()" style="background: rgba(0,0,0,0.3); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <i class="bi bi-chevron-left fs-4"></i>
+    </button>
+    <button class="slider-arrow next-arrow btn border-0 text-white position-absolute end-0 top-50 translate-middle-y z-3 me-3" 
+            (click)="nextSlide()" style="background: rgba(0,0,0,0.3); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <i class="bi bi-chevron-right fs-4"></i>
+    </button>
+
+    <!-- Slide Indicators -->
+    <div class="slider-dots position-absolute bottom-0 start-50 translate-middle-x z-3 mb-4 d-flex gap-2">
+      <button *ngFor="let s of slides; let idx = index"
+              class="slider-dot border-0 rounded-circle"
+              [class.active]="activeSlide() === idx"
+              (click)="goToSlide(idx)"
+              style="width: 10px; height: 10px; background: rgba(255,255,255,0.4); transition: all 0.3s;"
+              [style.background]="activeSlide() === idx ? 'var(--secondary-color)' : 'rgba(255,255,255,0.4)'"
+              [style.transform]="activeSlide() === idx ? 'scale(1.3)' : 'scale(1)'">
+      </button>
+    </div>
+  </section>
+
+  <!-- STATISTICS SECTION -->
+  <section class="stats-section bg-primary py-5 text-white shadow-sm">
+    <div class="container">
+      <div class="row text-center">
+        <div *ngFor="let s of stats" class="col-md-3 col-6 mb-4 mb-md-0">
+          <div class="stat-counter-box">
+            <div class="stat-val display-4 fw-800">{{s.current}}{{s.suffix}}</div>
+            <div class="stat-label small text-uppercase fw-600 tracking-wider text-white-50">
+              {{ s.label === 'Years Experience' ? ts.get('home.stats_experience') : 
+                 s.label === 'Completed Projects' ? ts.get('home.stats_projects') : 
+                 s.label === 'Active Equipment' ? ts.get('home.stats_equipment') : 
+                 s.label === 'Registered Engineers' ? ts.get('home.stats_engineers') : s.label }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMAGE ACCORDION SHOWCASE (Matching Elementor Accordion in WordPress) -->
+  <section class="accordion-showcase-section py-5 bg-transparent">
+    <div class="container py-4">
+      <div class="section-header">
+        <span class="subtitle">{{showcaseSubtitle()}}</span>
+        <h2 class="title">{{showcaseTitle()}}</h2>
+      </div>
+      
+      <div class="image-accordion-wrapper d-flex gap-3 mt-5 flex-md-row flex-column" style="height: 480px;">
+        <div *ngFor="let item of accordionProjects" 
+             class="accordion-card-item position-relative overflow-hidden rounded-lg cursor-pointer"
+             [attr.data-title]="item.title"
+             [style.background-image]="'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.75)), url(' + resolveImage(item.image) + ')'">
+          <div class="accordion-content position-absolute p-4 text-white">
+            <h4 class="fw-bold m-0">{{item.title}}</h4>
+            <p class="small text-white-50 m-0 mt-2">{{item.subtitle || 'United Ram Engineering Excellency'}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES SECTION -->
+  <section class="services-section py-5 bg-transparent">
+    <div class="container py-4">
+      <div class="section-header">
+        <span class="subtitle">{{servicesSubtitle()}}</span>
+        <h2 class="title">{{servicesTitle()}}</h2>
+      </div>
+      
+      <div class="row mt-4">
+        <!-- Render from dynamic service API if loaded, else fallback is shown -->
+        <ng-container *ngIf="services().length > 0; else fallbackServices">
+          <div *ngFor="let svc of services()" class="col-lg-3 col-md-6 mb-4">
+            <div class="service-card glass-panel h-100 p-4 border transition-all text-center">
+              <div class="service-icon mb-4 d-inline-flex align-items-center justify-content-center bg-light text-primary rounded-circle" style="width: 70px; height: 70px;">
+                <i class="bi {{svc.icon || 'bi-gear'}} fs-3"></i>
+              </div>
+              <h4 class="fw-bold mb-3">{{svc.title}}</h4>
+              <p class="text-secondary small mb-4">{{svc.description}}</p>
+              <a [routerLink]="['/services', svc.id]" class="btn btn-sm btn-outline-primary rounded-pill px-3">Read Details</a>
+            </div>
+          </div>
+        </ng-container>
+        
+        <ng-template #fallbackServices>
+          <!-- 4 main services -->
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="service-card glass-panel h-100 p-4 border transition-all text-center">
+              <div class="service-icon mb-4 d-inline-flex align-items-center justify-content-center bg-light text-primary rounded-circle" style="width: 70px; height: 70px;">
+                <i class="bi bi-cone-striped fs-3"></i>
+              </div>
+              <h4 class="fw-bold mb-3">Civil Construction</h4>
+              <p class="text-secondary small mb-4">High-end building construction, rehabilitation, and structural renovations.</p>
+              <a routerLink="/services" class="btn btn-sm btn-outline-primary rounded-pill px-3">Read Details</a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="service-card glass-panel h-100 p-4 border transition-all text-center">
+              <div class="service-icon mb-4 d-inline-flex align-items-center justify-content-center bg-light text-primary rounded-circle" style="width: 70px; height: 70px;">
+                <i class="bi bi-droplet-half fs-3"></i>
+              </div>
+              <h4 class="fw-bold mb-3">Water Pipelines</h4>
+              <p class="text-secondary small mb-4">Public drinking water networks, distribution piping, and reservoirs.</p>
+              <a routerLink="/services" class="btn btn-sm btn-outline-primary rounded-pill px-3">Read Details</a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="service-card glass-panel h-100 p-4 border transition-all text-center">
+              <div class="service-icon mb-4 d-inline-flex align-items-center justify-content-center bg-light text-primary rounded-circle" style="width: 70px; height: 70px;">
+                <i class="bi bi-activity fs-3"></i>
+              </div>
+              <h4 class="fw-bold mb-3">Infrastructure</h4>
+              <p class="text-secondary small mb-4">Road pavement, run-way runways, bridges, drainage systems and utilities.</p>
+              <a routerLink="/services" class="btn btn-sm btn-outline-primary rounded-pill px-3">Read Details</a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="service-card glass-panel h-100 p-4 border transition-all text-center">
+              <div class="service-icon mb-4 d-inline-flex align-items-center justify-content-center bg-light text-primary rounded-circle" style="width: 70px; height: 70px;">
+                <i class="bi bi-building fs-3"></i>
+              </div>
+              <h4 class="fw-bold mb-3">Project Management</h4>
+              <p class="text-secondary small mb-4">Comprehensive supervision, cost calculation, and engineering consulting.</p>
+              <a routerLink="/services" class="btn btn-sm btn-outline-primary rounded-pill px-3">Read Details</a>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PROJECTS -->
+  <section class="projects-section py-5 bg-transparent">
+    <div class="container py-4">
+      <div class="section-header">
+        <span class="subtitle">{{projectsSubtitle()}}</span>
+        <h2 class="title">{{projectsTitle()}}</h2>
+      </div>
+      <div class="row mt-4">
+        <div *ngFor="let p of featuredProjects()" class="col-lg-6 col-12 mb-4">
+          <div class="project-portfolio-card position-relative overflow-hidden rounded-lg shadow-sm" style="height: 380px;">
+            <div class="project-image w-100 h-100 bg-image" [style.background-image]="'url(' + resolveImage(p.image) + ')'" style="background-size: cover; background-position: center; transition: transform 0.6s;"></div>
+            <div class="project-card-overlay position-absolute inset-0 d-flex flex-column justify-content-end p-3 text-white">
+              
+              <!-- Glassmorphism Hover Info Card -->
+              <div class="project-glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge bg-secondary mb-0">{{p.category}}</span>
+                  <small class="text-white-50"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ ts.get('projects.location') }}: {{p.location}}</small>
+                </div>
+                <h3 class="fw-bold text-white mb-2 project-title">{{p.name}}</h3>
+                <p class="project-desc text-white-50 small mb-0">
+                  {{ p.description || 'Premium infrastructure delivery including advanced structural work, civil works, and engineering excellence.' }}
+                </p>
+                <a [routerLink]="['/projects', p.id]" class="btn btn-sm btn-primary rounded-pill px-4 align-self-start mt-3">
+                  {{ ts.get('projects.view_details') }}
+                </a>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HAPPY CLIENTS SLIDER SECTION (Matching elementskit-clients-slider in WordPress) -->
+  <section class="clients-section py-5 bg-transparent text-center overflow-hidden">
+    <div class="container py-4">
+      <div class="section-header">
+        <span class="subtitle">{{ ts.get('home.clients_subtitle') }}</span>
+        <h2 class="title">{{ ts.get('home.clients_title') }}</h2>
+      </div>
+      
+      <!-- Scrollable Clients Slider with Controls -->
+      <div class="position-relative mt-5 px-5">
+        <!-- Prev Arrow -->
+        <button (click)="scrollClients('prev')" class="btn btn-outline-light rounded-circle position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center border-0 shadow-lg clients-nav-btn" style="width: 45px; height: 45px; background: rgba(30,41,59,0.8); z-index: 10; transition: all 0.3s ease;">
+          <i class="bi bi-chevron-left fs-5"></i>
+        </button>
+
+        <!-- Container -->
+        <div #clientsContainer 
+             class="clients-scroll-container overflow-hidden d-flex gap-4 py-3" 
+             style="scroll-behavior: auto;"
+             (mouseenter)="isPaused = true" 
+             (mouseleave)="isPaused = false">
+          <!-- First set -->
+          <div *ngFor="let c of clients" class="client-logo-item flex-shrink-0">
+            <a [href]="c.link" target="_blank" class="client-logo-box p-3 d-inline-flex bg-white rounded border shadow-sm transition-all" style="width: 180px; height: 120px; align-items: center; justify-content: center;">
+              <img [src]="resolveImage(c.image)" [alt]="c.name" loading="lazy" class="img-fluid" style="max-height: 80px; filter: grayscale(10%); transition: filter 0.3s;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='grayscale(10%)'">
+            </a>
+          </div>
+          <!-- Duplicated set for seamless loop -->
+          <div *ngFor="let c of clients" class="client-logo-item flex-shrink-0">
+            <a [href]="c.link" target="_blank" class="client-logo-box p-3 d-inline-flex bg-white rounded border shadow-sm transition-all" style="width: 180px; height: 120px; align-items: center; justify-content: center;">
+              <img [src]="resolveImage(c.image)" [alt]="c.name" loading="lazy" class="img-fluid" style="max-height: 80px; filter: grayscale(10%); transition: filter 0.3s;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='grayscale(10%)'">
+            </a>
+          </div>
+        </div>
+
+        <!-- Next Arrow -->
+        <button (click)="scrollClients('next')" class="btn btn-outline-light rounded-circle position-absolute end-0 top-50 translate-middle-y d-flex align-items-center justify-content-center border-0 shadow-lg clients-nav-btn" style="width: 45px; height: 45px; background: rgba(30,41,59,0.8); z-index: 10; transition: all 0.3s ease;">
+          <i class="bi bi-chevron-right fs-5"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALL TO ACTION (LET'S MAKE SOMETHING TOGETHER) -->
+  <section class="cta-section py-5 text-white" style="background: linear-gradient(135deg, var(--primary-color), var(--dark-color));">
+    <div class="container py-5 text-center">
+      <h2 class="display-5 fw-bold text-white mb-3 text-uppercase">{{ctaTitle()}}</h2>
+      <p class="fs-5 text-white-50 mb-5" style="max-width: 600px; margin: auto;">{{ctaSubtitle()}}</p>
+      <a routerLink="/contact" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-primary tracking-wider shadow-lg">{{ ts.get('home.cta_btn') }}</a>
+    </div>
+  </section>
+
+  <!-- FAQS SECTION -->
+  <section class="faq-section py-5 bg-transparent">
+    <div class="container py-4">
+      <div class="section-header">
+        <span class="subtitle">{{ ts.get('home.faq_subtitle') }}</span>
+        <h2 class="title">{{ ts.get('home.faq_title') }}</h2>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-12">
+          <div class="accordion" id="accordionFaq">
+            <div *ngFor="let item of faqs; let i = index" class="accordion-item mb-3 border rounded">
+              <h2 class="accordion-header">
+                <button class="accordion-button fw-bold" type="button" [class.collapsed]="!item.open()" (click)="toggleFaq(i)">
+                  {{item.q}}
+                </button>
+              </h2>
+              <div class="accordion-collapse collapse" [class.show]="item.open()">
+                <div class="accordion-body text-secondary small bg-white">
+                  {{item.a}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

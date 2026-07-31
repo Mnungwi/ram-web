@@ -1,0 +1,419 @@
+// ── Home Page Premium Styles ──
+
+// ── Hero Slider ──
+.hero-slider-section {
+  .hero-slide-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+
+    &.active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 2;
+      animation: kenburns 24s ease-out infinite alternate;
+    }
+  }
+
+  // Premium Branded & Technical Grid Overlay
+  .hero-slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg, 
+      rgba(15, 23, 42, 0.92) 0%, 
+      rgba(15, 23, 42, 0.75) 45%, 
+      rgba(62, 80, 180, 0.22) 75%, 
+      rgba(217, 119, 6, 0.08) 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      // Technical engineering grid mesh background pattern
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 2;
+    }
+    
+    // Diagonal subtle engineering line texture
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.005),
+        rgba(255, 255, 255, 0.005) 2px,
+        transparent 2px,
+        transparent 8px
+      );
+      pointer-events: none;
+      z-index: 3;
+    }
+  }
+
+  @keyframes kenburns {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.08); }
+  }
+
+  .slider-arrow {
+    transition: all 0.3s ease;
+    &:hover {
+      background: var(--primary-color) !important;
+      color: #fff !important;
+      transform: translateY(-50%) scale(1.1) !important;
+      box-shadow: 0 4px 15px rgba(62, 80, 180, 0.4);
+    }
+  }
+
+  .slider-dot {
+    cursor: pointer;
+    &:hover {
+      background: var(--secondary-color) !important;
+      transform: scale(1.3) !important;
+    }
+  }
+
+  // Animation trigger on active slide
+  .active .slide-up-in {
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+// ── Statistics Counter (Sapphire Gradient with Gold accents) ──
+.stats-section {
+  background: var(--sapphire-gradient);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  .stat-counter-box {
+    .stat-val {
+      letter-spacing: -1px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      color: var(--secondary-color); // Gold counter text
+      font-family: var(--font-family-title);
+      font-weight: 800;
+    }
+    .stat-label {
+      color: var(--text-light) !important;
+    }
+  }
+}
+
+// ── Image Accordion Showcase (Flexbox Expansion) ──
+.image-accordion-wrapper {
+  .accordion-card-item {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    transition: all 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.04);
+    
+    // Collapsed vertical text hint (sleek branding detail)
+    &::before {
+      content: attr(data-title);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(-90deg);
+      color: rgba(255,255,255,0.3);
+      font-family: var(--font-family-title);
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      white-space: nowrap;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      z-index: 3;
+    }
+    
+    .accordion-content {
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      width: calc(100% - 40px);
+      background: rgba(15, 23, 42, 0.8) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 12px;
+      padding: 20px !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 4;
+      
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        text-shadow: none;
+        color: #ffffff !important;
+        margin-bottom: 4px !important;
+      }
+      p {
+        color: var(--secondary-color) !important; // Gold accent subtext
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+    }
+    
+    &:hover {
+      flex: 3.8; // Expand card width horizontally
+      border-color: var(--secondary-color); // Gold border highlight
+      box-shadow: 0 15px 35px rgba(217, 119, 6, 0.25); // Gold glow
+      
+      &::before {
+        opacity: 0; // Hide the vertical rotated text when expanded
+      }
+      
+      .accordion-content {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .image-accordion-wrapper {
+    height: auto !important;
+    .accordion-card-item {
+      height: 140px !important;
+      width: 100%;
+      flex: none !important;
+      margin-bottom: 8px;
+      .accordion-content {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  }
+}
+
+// ── Service Cards ──
+.services-section {
+  background: var(--dark-color) !important;
+  .service-card {
+    border-radius: 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s, border-color 0.4s;
+    
+    &:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(62, 80, 180, 0.15);
+      border-color: var(--secondary-color) !important; // Gold border on hover
+    }
+    .service-icon {
+      transition: all 0.3s ease;
+      background-color: var(--dark-accent) !important;
+      color: var(--secondary-color) !important; // Gold icons
+    }
+    &:hover .service-icon {
+      background: var(--gold-gradient) !important;
+      color: #fff !important;
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+    }
+  }
+}
+
+// ── Projects Grid cards ──
+.projects-section {
+  background: var(--dark-accent) !important;
+  .project-portfolio-card {
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    
+    .project-image {
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .project-card-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.65) 0%, transparent 60%) !important;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .project-glass-card {
+      background: rgba(15, 23, 42, 0.72) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 14px;
+      transform: translateY(68px);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease;
+      
+      .badge {
+        background: rgba(15, 23, 42, 0.8) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+      }
+      
+      .project-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        transition: color 0.3s;
+      }
+      
+      .project-desc {
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        margin-bottom: 0 !important;
+        transition: opacity 0.3s ease, max-height 0.4s ease, margin 0.4s ease;
+      }
+      
+      .btn {
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 0.3s ease, transform 0.4s ease, box-shadow 0.3s;
+      }
+    }
+    
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      border-color: var(--secondary-color) !important; // Gold border highlight
+      
+      .project-image {
+        transform: scale(1.08) rotate(0.5deg);
+      }
+      
+      .project-card-overlay {
+        background: linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.1) 85%) !important;
+      }
+      
+      .project-glass-card {
+        background: rgba(15, 23, 42, 0.88) !important;
+        transform: translateY(0);
+        border-color: rgba(217, 119, 6, 0.3) !important;
+        
+        .badge {
+          background: var(--secondary-color) !important; // Gold badge on hover
+          border-color: transparent;
+        }
+        
+        .project-desc {
+          opacity: 1;
+          max-height: 90px;
+          margin-bottom: 1rem !important;
+        }
+        
+        .btn {
+          opacity: 1;
+          transform: translateY(0);
+          box-shadow: 0 4px 15px rgba(217, 119, 6, 0.35);
+        }
+      }
+    }
+  }
+}
+
+// ── Partner Clients Slider ──
+.clients-section {
+  background: var(--dark-color) !important;
+}
+
+.clients-scroll-container {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
+
+.clients-nav-btn {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  transition: all 0.3s ease !important;
+  &:hover {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    transform: scale(1.1) translateY(-50%) !important;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45) !important;
+  }
+}
+
+.client-logo-box {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  transition: all 0.3s ease;
+  img {
+    filter: brightness(0.9) grayscale(10%) !important;
+  }
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(217, 119, 6, 0.2) !important;
+    border-color: var(--secondary-color) !important;
+    img {
+      filter: none !important;
+    }
+  }
+}
+
+// ── Accordion FAQ ──
+.faq-section {
+  background: var(--dark-color) !important;
+  .accordion-button {
+    font-size: 15px;
+    padding: 18px 24px;
+    background: var(--dark-accent) !important;
+    color: var(--text-light);
+    box-shadow: none;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    &:not(.collapsed) {
+      background: rgba(62, 80, 180, 0.15) !important;
+      color: var(--text-light);
+      border-color: var(--primary-color);
+    }
+  }
+  .accordion-item {
+    border: none;
+    background: transparent;
+    overflow: hidden;
+  }
+}
