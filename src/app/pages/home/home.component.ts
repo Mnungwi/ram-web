@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { SeoService } from '../../core/services/seo.service';
 import { TranslationService } from '../../core/services/translation.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -50,7 +51,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ];
 
   // Hero Slider matching original WordPress images
-  slides = [
+  slides: any[] = [
     {
       title: 'Engineering Infrastructure Excellence',
       subtitle: 'Delivering world-class heavy civil, pipeline, and structural projects across Zanzibar & East Africa.',
@@ -73,7 +74,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   activeSlide = signal(0);
 
   // Accordion Projects matching original WordPress Elementor widget
-  accordionProjects = [
+  accordionProjects: any[] = [
     { title: 'Malindi Car Parking', image: '/malindi2.jpg', subtitle: 'United Ram Engineering Excellency' },
     { title: 'Mbweni Road Rehab', image: '/mbweni-4.png', subtitle: 'United Ram Engineering Excellency' },
     { title: 'Tunguu Infrastructure', image: '/tunguu1.jpg', subtitle: 'United Ram Engineering Excellency' },
@@ -91,6 +92,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   // CTA Section
   ctaTitle = signal("LET'S MAKE SOMETHING TOGETHER");
   ctaSubtitle = signal("Get in touch with us and send some basic info for a quick quote");
+  ctaTitleSw = signal('');
+  ctaSubtitleSw = signal('');
 
   // Marquee scroll control state
   marqueePaused = signal(false);
@@ -100,11 +103,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   latestNews = signal<any[]>([]);
 
   showcaseSubtitle = signal('Focus Showcase');
+  showcaseSubtitleSw = signal('');
   showcaseTitle = signal('Our Major Landmark Works');
+  showcaseTitleSw = signal('');
   servicesSubtitle = signal('What We Do');
+  servicesSubtitleSw = signal('');
   servicesTitle = signal('Our Engineering Expertise');
+  servicesTitleSw = signal('');
   projectsSubtitle = signal('Our Works');
+  projectsSubtitleSw = signal('');
   projectsTitle = signal('Featured Infrastructure');
+  projectsTitleSw = signal('');
 
   // FAQ Accordion list
   faqs: any[] = [];
@@ -166,13 +175,21 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         if (d.home_cta_title) this.ctaTitle.set(d.home_cta_title);
         if (d.home_cta_subtitle) this.ctaSubtitle.set(d.home_cta_subtitle);
+        if (d.home_cta_title_sw) this.ctaTitleSw.set(d.home_cta_title_sw);
+        if (d.home_cta_subtitle_sw) this.ctaSubtitleSw.set(d.home_cta_subtitle_sw);
 
         if (d.home_showcase_subtitle) this.showcaseSubtitle.set(d.home_showcase_subtitle);
+        if (d.home_showcase_subtitle_sw) this.showcaseSubtitleSw.set(d.home_showcase_subtitle_sw);
         if (d.home_showcase_title) this.showcaseTitle.set(d.home_showcase_title);
+        if (d.home_showcase_title_sw) this.showcaseTitleSw.set(d.home_showcase_title_sw);
         if (d.home_services_subtitle) this.servicesSubtitle.set(d.home_services_subtitle);
+        if (d.home_services_subtitle_sw) this.servicesSubtitleSw.set(d.home_services_subtitle_sw);
         if (d.home_services_title) this.servicesTitle.set(d.home_services_title);
+        if (d.home_services_title_sw) this.servicesTitleSw.set(d.home_services_title_sw);
         if (d.home_projects_subtitle) this.projectsSubtitle.set(d.home_projects_subtitle);
+        if (d.home_projects_subtitle_sw) this.projectsSubtitleSw.set(d.home_projects_subtitle_sw);
         if (d.home_projects_title) this.projectsTitle.set(d.home_projects_title);
+        if (d.home_projects_title_sw) this.projectsTitleSw.set(d.home_projects_title_sw);
 
         if (d.home_accordion_json) {
           try {
@@ -202,7 +219,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             if (Array.isArray(parsed) && parsed.length > 0) {
               this.slides = parsed.map(s => ({
                 title: s.title,
+                title_sw: s.title_sw,
                 subtitle: s.subtitle,
+                subtitle_sw: s.subtitle_sw,
                 bg: s.image || s.bg || '/project3.jpg',
                 primaryBtn: 'Explore Services',
                 secondaryBtn: 'Contact Us',
@@ -224,7 +243,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (res.success && res.data && res.data.length > 0) {
         this.faqs = res.data.map((faq: any) => ({
           q: faq.question,
+          q_sw: faq.question_sw,
           a: faq.answer,
+          a_sw: faq.answer_sw,
           open: signal(false)
         }));
       } else {
@@ -297,7 +318,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     if (imagePath.startsWith('/uploads') || imagePath.startsWith('uploads')) {
       const path = imagePath.startsWith('/') ? imagePath : '/' + imagePath;
-      return 'http://localhost:3000' + path;
+      return environment.mediaUrl + path;
     }
     return imagePath;
   }

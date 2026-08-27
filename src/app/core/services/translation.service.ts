@@ -80,7 +80,37 @@ export class TranslationService {
       'contact.btn_send': 'Send Message',
       'contact.info_heading': 'Contact Information',
       'contact.office': 'Head Office',
-      'contact.hours': 'Working Hours'
+      'contact.hours': 'Working Hours',
+      'validation.required': 'This field is required.',
+      'validation.email': 'Please enter a valid email address.',
+      'validation.minlength': 'This field is too short.',
+      'contact.sending': 'Sending your message...',
+      'contact.success': 'Your message has been sent successfully!',
+      'contact.error': 'Something went wrong. Please try again.',
+      'projectDetail.badge': 'Project Showcase',
+      'projectDetail.overview': 'Project Overview',
+      'projectDetail.approach_title': 'Our Engineering Approach',
+      'projectDetail.quality_safety': 'Quality & Safety:',
+      'projectDetail.delivery': 'Delivery:',
+      'projectDetail.approach_quality_default': 'Every project follows our standard engineering controls — certified materials, structural QA/QC checkpoints, and on-site HSE supervision throughout the build.',
+      'projectDetail.approach_delivery_default': 'Our project management team coordinates procurement, site works, and stakeholder sign-off to keep delivery on schedule and within budget.',
+      'projectDetail.gallery_title': 'Project Gallery & Library',
+      'projectDetail.no_photos': 'No photos have been uploaded for this project yet.',
+      'projectDetail.contract_metadata': 'Contract Metadata',
+      'projectDetail.client': 'Client',
+      'projectDetail.contract_valuation': 'Contract Valuation',
+      'projectDetail.duration': 'Duration',
+      'projectDetail.current_status': 'Current Status',
+      'projectDetail.partner_title': 'Partner with Us',
+      'projectDetail.partner_text': 'Leverage our certified engineering equipment and resources on your next project bid.',
+      'projectDetail.consult_btn': 'Consult Our Engineers',
+      'projectDetail.default_location': 'East Africa',
+      'projectDetail.month_singular': 'Calendar Month',
+      'projectDetail.month_plural': 'Calendar Months',
+      'status.active': 'Active',
+      'status.on_hold': 'On Hold',
+      'status.completed': 'Completed',
+      'status.cancelled': 'Cancelled'
     },
     SW: {
       'nav.home': 'Nyumbani',
@@ -154,7 +184,37 @@ export class TranslationService {
       'contact.btn_send': 'Tuma Ujumbe',
       'contact.info_heading': 'Maelezo ya Wasiliana Nasi',
       'contact.office': 'Ofisi Kuu',
-      'contact.hours': 'Masaa ya Kazi'
+      'contact.hours': 'Masaa ya Kazi',
+      'validation.required': 'Sehemu hii inahitajika.',
+      'validation.email': 'Tafadhali weka barua pepe sahihi.',
+      'validation.minlength': 'Sehemu hii ni fupi mno.',
+      'contact.sending': 'Tunatuma ujumbe wako...',
+      'contact.success': 'Ujumbe wako umetumwa kwa mafanikio!',
+      'contact.error': 'Hitilafu imetokea. Tafadhali jaribu tena.',
+      'projectDetail.badge': 'Onyesho la Mradi',
+      'projectDetail.overview': 'Muhtasari wa Mradi',
+      'projectDetail.approach_title': 'Mbinu Yetu ya Kihandisi',
+      'projectDetail.quality_safety': 'Ubora na Usalama:',
+      'projectDetail.delivery': 'Utoaji:',
+      'projectDetail.approach_quality_default': 'Kila mradi unafuata udhibiti wetu wa kawaida wa kihandisi — vifaa vilivyoidhinishwa, ukaguzi wa ubora wa muundo (QA/QC), na usimamizi wa afya na usalama (HSE) eneo la ujenzi wakati wote.',
+      'projectDetail.approach_delivery_default': 'Timu yetu ya usimamizi wa mradi inaratibu ununuzi, kazi za eneo la mradi, na idhini ya wadau ili kuhakikisha utoaji unakamilika kwa wakati na ndani ya bajeti.',
+      'projectDetail.gallery_title': 'Picha na Maktaba ya Mradi',
+      'projectDetail.no_photos': 'Hakuna picha zilizopakiwa kwa mradi huu bado.',
+      'projectDetail.contract_metadata': 'Taarifa za Mkataba',
+      'projectDetail.client': 'Mteja',
+      'projectDetail.contract_valuation': 'Thamani ya Mkataba',
+      'projectDetail.duration': 'Muda',
+      'projectDetail.current_status': 'Hali ya Sasa',
+      'projectDetail.partner_title': 'Shirikiana Nasi',
+      'projectDetail.partner_text': 'Tumia vifaa vyetu vya kihandisi vilivyoidhinishwa na rasilimali kwenye zabuni yako ijayo ya mradi.',
+      'projectDetail.consult_btn': 'Wasiliana na Wahandisi Wetu',
+      'projectDetail.default_location': 'Afrika Mashariki',
+      'projectDetail.month_singular': 'Mwezi wa Kalenda',
+      'projectDetail.month_plural': 'Miezi ya Kalenda',
+      'status.active': 'Inaendelea',
+      'status.on_hold': 'Imesimamishwa',
+      'status.completed': 'Imekamilika',
+      'status.cancelled': 'Imefutwa'
     }
   };
 
@@ -180,5 +240,29 @@ export class TranslationService {
     const lang = this.currentLang(); // Registers reactive dependency
     const dict = this.dictionary[lang] || this.dictionary['EN'];
     return dict[key] || key;
+  }
+
+  /**
+   * For database-driven content stored as EN/SW sibling fields (e.g.
+   * service.title / service.title_sw). Returns the Swahili value when
+   * Kiswahili is active AND a translation exists, otherwise falls back to
+   * English so content is never blank.
+   */
+  pick(en: string | null | undefined, sw: string | null | undefined): string {
+    if (this.currentLang() === 'SW' && sw && sw.trim()) return sw;
+    return en || '';
+  }
+
+  /**
+   * Translates a project/entity status enum value (e.g. "active",
+   * "on_hold", "completed", "cancelled") into the current language's
+   * display label, via the static "status.<value>" dictionary keys.
+   * Falls back to the raw status string for anything not in the dictionary.
+   */
+  statusLabel(status: string | null | undefined): string {
+    if (!status) return '';
+    const key = `status.${status.toLowerCase().replace(/\s+/g, '_')}`;
+    const label = this.get(key);
+    return label === key ? status : label;
   }
 }

@@ -394,6 +394,67 @@
   }
 }
 
+// ── Call To Action ("Let's Make Something Together") ──
+//
+// No repeating pattern at all (grid, contour lines, or otherwise) — a
+// solid navy field with exactly one bold accent: a single gold wedge
+// bleeding in from the bottom-right corner, like a beam of light or a
+// site floodlight at dusk. One confident shape, quiet everywhere else.
+.cta-section {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--dark-color);
+  clip-path: polygon(0 28px, 100% 0, 100% 100%, 0 100%);
+
+  // The one accent shape — soft-edged, angled, low-opacity so it reads as
+  // light falling across the surface rather than a printed graphic.
+  &::after {
+    content: '';
+    position: absolute;
+    right: -12%;
+    bottom: -60%;
+    width: 65%;
+    height: 220%;
+    background: var(--gold-gradient);
+    opacity: 0.16;
+    transform: rotate(-22deg);
+    filter: blur(2px);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  // A single confident band of gold along the top edge, like a title
+  // block rule on a drawing sheet — the section's one hard accent line.
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gold-gradient);
+    z-index: 2;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  h2 {
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  .btn {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    }
+  }
+}
+
 // ── Accordion FAQ ──
 .faq-section {
   background: var(--dark-color) !important;

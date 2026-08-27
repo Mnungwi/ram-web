@@ -30,8 +30,8 @@ import { TranslationService } from '../../core/services/translation.service';
                     <i class="bi {{ svc.icon }} fs-3 text-secondary"></i>
                   </div>
                   <div>
-                    <h3 class="fw-bold mb-3 text-white" style="font-size: 1.45rem;">{{ svc.title }}</h3>
-                    <p class="text-white-50 small leading-relaxed mb-4">{{ svc.description }}</p>
+                    <h3 class="fw-bold mb-3 text-white" style="font-size: 1.45rem;">{{ ts.pick(svc.title, svc.title_sw) }}</h3>
+                    <p class="text-white-50 small leading-relaxed mb-4">{{ ts.pick(svc.description, svc.description_sw) }}</p>
                     <a [routerLink]="['/services', svc.id]" class="btn btn-sm btn-outline-light rounded-pill px-4">
                       {{ ts.get('services.btn_details') }} <i class="bi bi-arrow-right ms-1 text-primary"></i>
                     </a>

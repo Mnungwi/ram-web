@@ -4,6 +4,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { TranslationService } from '../../core/services/translation.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-main-layout',
@@ -30,10 +31,18 @@ export class MainLayoutComponent implements OnInit {
   socialInstagram = signal('#');
   socialLinkedin = signal('#');
   footerCopyright = signal('© 2026 United Ram Construction Company Ltd. All rights reserved.');
+  footerAboutText = signal('Premier contractor in heavy civil, engineering design, road rehabilitation, and public building construction across Zanzibar & East Africa.');
+  footerServices = signal<string[]>(['Building Construction', 'Road & Bridges Infrastructure', 'Water supply & Pipelines', 'Industrial Facilities']);
+  footerWhatsappNumber = signal('255777412337');
+  footerStaffMailUrl = signal('http://mail.unitedram.com');
 
   // Dynamic mega menu values
   showCompanyMega = signal(false);
   showProjectsMega = signal(false);
+
+  // Careers nav link only shows up when there's at least one active vacancy
+  // (the /careers route itself is also blocked by careersGuard otherwise).
+  hasActiveCareers = signal(false);
 
   constructor(
     private apiSvc: PublicApiService,
@@ -54,6 +63,9 @@ export class MainLayoutComponent implements OnInit {
     this.onWindowScroll();
     if (isPlatformBrowser(this.platformId)) {
       this.loadSettings();
+      this.apiSvc.getCareers().subscribe((res) => {
+        this.hasActiveCareers.set(!!(res?.success && res?.data && res.data.length > 0));
+      });
     }
   }
 
@@ -72,6 +84,15 @@ export class MainLayoutComponent implements OnInit {
           if (d.social_instagram) this.socialInstagram.set(d.social_instagram);
           if (d.social_linkedin) this.socialLinkedin.set(d.social_linkedin);
           if (d.footer_copyright) this.footerCopyright.set(d.footer_copyright);
+          if (d.footer_about_text) this.footerAboutText.set(d.footer_about_text);
+          if (d.footer_whatsapp_number) this.footerWhatsappNumber.set(d.footer_whatsapp_number);
+          if (d.footer_staff_mail_url) this.footerStaffMailUrl.set(d.footer_staff_mail_url);
+          if (d.footer_services_json) {
+            try {
+              const arr = JSON.parse(d.footer_services_json);
+              if (Array.isArray(arr) && arr.length > 0) this.footerServices.set(arr);
+            } catch {}
+          }
 
           // Update favicon dynamically in browser
           if (d.site_favicon && typeof document !== 'undefined') {
@@ -115,7 +136,7 @@ export class MainLayoutComponent implements OnInit {
     }
     if (imagePath.startsWith('/uploads') || imagePath.startsWith('uploads')) {
       const path = imagePath.startsWith('/') ? imagePath : '/' + imagePath;
-      return 'http://localhost:3000' + path;
+      return environment.mediaUrl + path;
     }
     return imagePath;
   }

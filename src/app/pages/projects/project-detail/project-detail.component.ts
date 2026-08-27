@@ -3,6 +3,8 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PublicApiService } from '../../../core/services/public-api.service';
 import { Title, Meta } from '@angular/platform-browser';
+import { TranslationService } from '../../../core/services/translation.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-project-detail',
@@ -13,9 +15,9 @@ import { Title, Meta } from '@angular/platform-browser';
       <!-- Banner -->
       <section class="page-banner text-center text-white py-5" [style.background-image]="'linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), url(' + resolveImage(project()!.image || '/project3.jpg') + ')'" style="background-size:cover; background-position:center; padding: 120px 0 !important;">
         <div class="container">
-          <span class="badge bg-secondary text-uppercase px-3 py-2 mb-3">Project Showcase</span>
-          <h1 class="display-4 fw-bold" style="font-family: var(--font-family-title)">{{ project()!.name }}</h1>
-          <p class="lead"><i class="bi bi-geo-alt me-2 text-primary"></i>{{ project()!.location || 'East Africa' }}</p>
+          <span class="badge bg-secondary text-uppercase px-3 py-2 mb-3">{{ ts.get('projectDetail.badge') }}</span>
+          <h1 class="display-4 fw-bold" style="font-family: var(--font-family-title)">{{ ts.pick(project()!.name, project()!.name_sw) }}</h1>
+          <p class="lead"><i class="bi bi-geo-alt me-2 text-primary"></i>{{ project()!.location || ts.get('projectDetail.default_location') }}</p>
         </div>
       </section>
 
@@ -24,23 +26,23 @@ import { Title, Meta } from '@angular/platform-browser';
         <div class="container py-4">
           <div class="row">
             <div class="col-lg-8">
-              <h2 class="fw-bold mb-4 text-white">Project Overview</h2>
+              <h2 class="fw-bold mb-4 text-white">{{ ts.get('projectDetail.overview') }}</h2>
               <p class="text-white-50 leading-relaxed mb-5 fs-5">
-                {{ project()!.description }}
+                {{ ts.pick(project()!.description, project()!.description_sw) }}
               </p>
-              
-              <!-- Construction Challenges & Solutions -->
-              <h4 class="fw-bold mt-5 mb-4 text-white">Construction Challenges & Solutions</h4>
+
+              <!-- Engineering Approach (per-project — admin can override on the Website Display section of Project Settings) -->
+              <h4 class="fw-bold mt-5 mb-4 text-white">{{ ts.get('projectDetail.approach_title') }}</h4>
               <div class="p-4 border rounded mb-5 glass-panel" style="border-color: var(--glass-border) !important;">
-                <h6 class="text-white"><i class="bi bi-exclamation-triangle-fill text-primary me-2"></i>The Challenge:</h6>
-                <p class="text-white-50 small leading-relaxed">Deep soil instability and intense seasonal rainfall requiring quick-acting structural reinforcements.</p>
-                <h6 class="mt-4 text-white"><i class="bi bi-check-circle-fill text-success me-2"></i>The Solution:</h6>
-                <p class="text-white-50 small mb-0 leading-relaxed">Engineered micro-pile foundations coupled with rapid hydration additives to cure concrete under wet conditions.</p>
+                <h6 class="text-white"><i class="bi bi-shield-check text-primary me-2"></i>{{ ts.get('projectDetail.quality_safety') }}</h6>
+                <p class="text-white-50 small leading-relaxed">{{ approachQualityText() }}</p>
+                <h6 class="mt-4 text-white"><i class="bi bi-check-circle-fill text-success me-2"></i>{{ ts.get('projectDetail.delivery') }}</h6>
+                <p class="text-white-50 small mb-0 leading-relaxed">{{ approachDeliveryText() }}</p>
               </div>
 
               <!-- Project Library / Gallery -->
-              <h4 class="fw-bold mt-5 mb-4 text-white">Project Gallery & Library</h4>
-              <div class="row g-3">
+              <h4 class="fw-bold mt-5 mb-4 text-white">{{ ts.get('projectDetail.gallery_title') }}</h4>
+              <div class="row g-3" *ngIf="libraryImages.length > 0">
                 <div *ngFor="let img of libraryImages" class="col-md-4 col-6">
                   <div class="card border rounded-lg overflow-hidden gallery-card cursor-pointer position-relative" style="height:150px; border-color: var(--glass-border) !important;" (click)="openLightbox(img)">
                     <img [src]="img" loading="lazy" class="w-100 h-100" style="object-fit:cover; transition: transform 0.5s ease;">
@@ -52,37 +54,38 @@ import { Title, Meta } from '@angular/platform-browser';
                   </div>
                 </div>
               </div>
+              <p class="text-white-50 small fst-italic" *ngIf="libraryImages.length === 0">{{ ts.get('projectDetail.no_photos') }}</p>
             </div>
-            
+
             <div class="col-lg-4">
               <!-- Meta Cards -->
               <div class="card p-4 border rounded-lg mb-4 glass-panel" style="border-color: var(--glass-border) !important;">
-                <h5 class="fw-bold mb-4 border-bottom pb-2 text-white">Contract Metadata</h5>
+                <h5 class="fw-bold mb-4 border-bottom pb-2 text-white">{{ ts.get('projectDetail.contract_metadata') }}</h5>
                 <ul class="list-unstyled">
-                  <li class="mb-4">
-                    <span class="text-white-50 d-block small mb-1">Client Authority</span>
-                    <strong class="text-white fs-5">Government Infrastructure Ministry</strong>
+                  <li class="mb-4" *ngIf="project()!.clientInfo?.name">
+                    <span class="text-white-50 d-block small mb-1">{{ ts.get('projectDetail.client') }}</span>
+                    <strong class="text-white fs-5">{{ project()!.clientInfo.name }}</strong>
                   </li>
-                  <li class="mb-4">
-                    <span class="text-white-50 d-block small mb-1">Contract Valuation</span>
-                    <strong class="text-primary fs-5">TZS 150,000,000</strong>
+                  <li class="mb-4" *ngIf="formatBudget()">
+                    <span class="text-white-50 d-block small mb-1">{{ ts.get('projectDetail.contract_valuation') }}</span>
+                    <strong class="text-primary fs-5">{{ formatBudget() }}</strong>
                   </li>
-                  <li class="mb-4">
-                    <span class="text-white-50 d-block small mb-1">Duration</span>
-                    <strong class="text-white fs-5">18 Calendar Months</strong>
+                  <li class="mb-4" *ngIf="durationText()">
+                    <span class="text-white-50 d-block small mb-1">{{ ts.get('projectDetail.duration') }}</span>
+                    <strong class="text-white fs-5">{{ durationText() }}</strong>
                   </li>
                   <li>
-                    <span class="text-white-50 d-block small mb-1">Current Status</span>
-                    <span class="badge text-uppercase" style="background: var(--gold-gradient)">{{ project()!.status }}</span>
+                    <span class="text-white-50 d-block small mb-1">{{ ts.get('projectDetail.current_status') }}</span>
+                    <span class="badge text-uppercase" style="background: var(--gold-gradient)">{{ statusText() }}</span>
                   </li>
                 </ul>
               </div>
 
               <!-- CTA -->
               <div class="card bg-dark text-white p-4 text-center rounded-lg glass-panel" style="border-color: var(--glass-border) !important;">
-                <h5 class="fw-bold mb-3 text-white">Partner with Us</h5>
-                <p class="text-white-50 small mb-4">Leverage our certified engineering equipment and resources on your next project bid.</p>
-                <a routerLink="/contact" class="btn btn-primary rounded-pill w-100">Consult Our Engineers</a>
+                <h5 class="fw-bold mb-3 text-white">{{ ts.get('projectDetail.partner_title') }}</h5>
+                <p class="text-white-50 small mb-4">{{ ts.get('projectDetail.partner_text') }}</p>
+                <a routerLink="/contact" class="btn btn-primary rounded-pill w-100">{{ ts.get('projectDetail.consult_btn') }}</a>
               </div>
             </div>
           </div>
@@ -98,7 +101,9 @@ import { Title, Meta } from '@angular/platform-browser';
 
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content bg-transparent border-0 text-center position-relative">
-            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" (click)="activeLightboxImage.set(null)" style="z-index: 3001;"></button>
+            <button type="button" class="lightbox-close-btn position-absolute top-0 end-0 m-3 btn rounded-circle d-flex align-items-center justify-content-center border-0 shadow-lg" (click)="activeLightboxImage.set(null)" style="width: 42px; height: 42px; z-index: 3001; background: rgba(30,41,59,0.85);">
+              <i class="bi bi-x-lg fs-5" style="color: #ef4444;"></i>
+            </button>
             <img [src]="activeLightboxImage()!" class="img-fluid rounded shadow-lg max-vh-75 mx-auto border" [class.lightbox-img-fade]="!isTransitioning()" style="border-color: rgba(255,255,255,0.15) !important; object-fit: contain;">
           </div>
         </div>
@@ -129,6 +134,17 @@ import { Title, Meta } from '@angular/platform-browser';
       transform: scale(1.1) translateY(-50%) !important;
       box-shadow: 0 5px 20px rgba(37,99,235,0.5) !important;
     }
+    .lightbox-close-btn {
+      transition: all 0.2s ease;
+    }
+    .lightbox-close-btn:hover {
+      background: #ef4444 !important;
+      transform: scale(1.1);
+      box-shadow: 0 5px 20px rgba(239,68,68,0.5);
+    }
+    .lightbox-close-btn:hover i {
+      color: #fff !important;
+    }
     .lightbox-img-fade {
       animation: lightboxFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -149,6 +165,7 @@ export class ProjectDetailComponent implements OnInit {
     private apiSvc: PublicApiService,
     private titleSvc: Title,
     private metaSvc: Meta,
+    public ts: TranslationService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -163,7 +180,7 @@ export class ProjectDetailComponent implements OnInit {
       location: 'Zanzibar, Tanzania',
       image: '/project3.jpg'
     });
-    this.libraryImages = ['/malindi2.jpg', '/mbweni-4.png', '/tunguu1.jpg'];
+    this.libraryImages = [];
 
     if (id && isPlatformBrowser(this.platformId)) {
       this.apiSvc.getProjectById(id).subscribe(res => {
@@ -179,14 +196,59 @@ export class ProjectDetailComponent implements OnInit {
           this.apiSvc.getGallery({ projectId: id }).subscribe(galleryRes => {
             if (galleryRes.success && galleryRes.data && galleryRes.data.length > 0) {
               this.libraryImages = galleryRes.data.map((item: any) => this.resolveImage(item.imageUrl));
+            } else if (p.image) {
+              // No gallery uploads yet — show at least this project's own cover photo
+              this.libraryImages = [this.resolveImage(p.image)];
             } else {
-              // Fallback to project's main image if no gallery pictures exist
-              this.libraryImages = [this.resolveImage(p.image || '/project3.jpg')];
+              // Genuinely nothing uploaded for this project — honest empty state
+              // instead of borrowing another project's photos.
+              this.libraryImages = [];
             }
           });
         }
       });
     }
+  }
+
+  formatBudget(): string {
+    const p = this.project();
+    // Admin-entered override (Project Settings → Website Display) always wins.
+    if (p?.contractValue) return p.contractValue;
+    if (!p?.totalBudget) return '';
+    const amount = Number(p.totalBudget);
+    const currency = p.currency || 'TZS';
+    return `${currency} ${amount.toLocaleString('en-US')}`;
+  }
+
+  durationText(): string {
+    const p = this.project();
+    if (p?.contractDuration) {
+      return this.ts.pick(p.contractDuration, p.contractDuration_sw);
+    }
+    if (!p?.startDate || !p?.endDate) return '';
+    const start = new Date(p.startDate);
+    const end = new Date(p.endDate);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return '';
+    let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+    if (months < 1) months = 1;
+    const unit = this.ts.get(months === 1 ? 'projectDetail.month_singular' : 'projectDetail.month_plural');
+    return `${months} ${unit}`;
+  }
+
+  approachQualityText(): string {
+    const p = this.project();
+    return this.ts.pick(p?.approachQuality, p?.approachQuality_sw) ||
+      this.ts.get('projectDetail.approach_quality_default');
+  }
+
+  approachDeliveryText(): string {
+    const p = this.project();
+    return this.ts.pick(p?.approachDelivery, p?.approachDelivery_sw) ||
+      this.ts.get('projectDetail.approach_delivery_default');
+  }
+
+  statusText(): string {
+    return this.ts.statusLabel(this.project()?.status);
   }
 
   resolveImage(imagePath: string): string {
@@ -196,7 +258,7 @@ export class ProjectDetailComponent implements OnInit {
     }
     if (imagePath.startsWith('/uploads') || imagePath.startsWith('uploads')) {
       const path = imagePath.startsWith('/') ? imagePath : '/' + imagePath;
-      return 'http://localhost:3000' + path;
+      return environment.mediaUrl + path;
     }
     return imagePath;
   }

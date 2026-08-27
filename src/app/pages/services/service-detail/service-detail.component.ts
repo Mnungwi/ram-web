@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PublicApiService } from '../../../core/services/public-api.service';
+import { TranslationService } from '../../../core/services/translation.service';
 
 @Component({
   selector: 'app-service-detail',
@@ -10,10 +11,10 @@ import { PublicApiService } from '../../../core/services/public-api.service';
   template: `
     <div class="service-detail-page fade-in-page" *ngIf="service()">
       <!-- Banner -->
-      <section class="page-banner text-center text-white py-5 bg-dark" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1590069261209-f8e9b8642343?auto=format&fit=crop&w=1920&q=80'); background-size:cover; background-position:center; padding: 100px 0 !important;">
+      <section class="page-banner text-center text-white py-5 bg-dark" [style.background-image]="'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(' + bannerImage() + ')'" style="background-size:cover; background-position:center; padding: 100px 0 !important;">
         <div class="container">
           <span class="badge bg-secondary text-uppercase px-3 py-2 mb-3">Service Speciality</span>
-          <h1 class="display-4 fw-bold">{{ service()!.title }}</h1>
+          <h1 class="display-4 fw-bold">{{ ts.pick(service()!.title, service()!.title_sw) }}</h1>
         </div>
       </section>
 
@@ -24,17 +25,17 @@ import { PublicApiService } from '../../../core/services/public-api.service';
             <div class="col-lg-8">
               <h2 class="fw-bold mb-4">Service Overview</h2>
               <p class="text-secondary leading-relaxed mb-4">
-                {{ service()!.description }}
+                {{ ts.pick(service()!.description, service()!.description_sw) }}
               </p>
-              <p class="text-secondary leading-relaxed mb-5">
-                Our team brings over 25 years of combined engineering excellence, utilizing pre-cast technologies, advanced structural analysis tools, and highly automated paving layouts to execute complex structures smoothly.
+              <p class="text-secondary leading-relaxed mb-5" *ngIf="overviewText()">
+                {{ overviewText() }}
               </p>
 
               <h4 class="fw-bold mb-4">Key Benefits</h4>
               <ul class="list-group list-group-flush mb-5">
-                <li class="list-group-item border-0 px-0 d-flex align-items-center"><i class="bi bi-patch-check-fill text-primary me-3 fs-5"></i> High-strength concrete mixes and long-durability engineering standards</li>
-                <li class="list-group-item border-0 px-0 d-flex align-items-center"><i class="bi bi-patch-check-fill text-primary me-3 fs-5"></i> Fully certified ISO quality materials and testing parameters</li>
-                <li class="list-group-item border-0 px-0 d-flex align-items-center"><i class="bi bi-patch-check-fill text-primary me-3 fs-5"></i> Environmentally optimized and waste-reduced workflows</li>
+                <li class="list-group-item border-0 px-0 d-flex align-items-center" *ngFor="let b of benefits()">
+                  <i class="bi bi-patch-check-fill text-primary me-3 fs-5"></i> {{ b }}
+                </li>
               </ul>
             </div>
             
@@ -54,8 +55,9 @@ import { PublicApiService } from '../../../core/services/public-api.service';
 })
 export class ServiceDetailComponent implements OnInit {
   service = signal<any | null>(null);
+  bannerImage = signal('/project3.jpg');
 
-  constructor(private route: ActivatedRoute, private apiSvc: PublicApiService) {}
+  constructor(private route: ActivatedRoute, private apiSvc: PublicApiService, public ts: TranslationService) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -65,5 +67,32 @@ export class ServiceDetailComponent implements OnInit {
         this.service.set(item || res.data[0]);
       }
     });
+
+    this.apiSvc.getSettings().subscribe(res => {
+      if (res.success && res.data && res.data.banner_services) {
+        this.bannerImage.set(res.data.banner_services);
+      }
+    });
+  }
+
+  overviewText(): string {
+    const s = this.service();
+    return this.ts.pick(s?.overviewText, s?.overviewText_sw) ||
+      'Our team brings over 25 years of combined engineering excellence, utilizing pre-cast technologies, advanced structural analysis tools, and highly automated paving layouts to execute complex structures smoothly.';
+  }
+
+  benefits(): string[] {
+    const raw = this.service()?.benefitsJson;
+    if (raw) {
+      try {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length > 0) return arr;
+      } catch {}
+    }
+    return [
+      'High-strength concrete mixes and long-durability engineering standards',
+      'Fully certified ISO quality materials and testing parameters',
+      'Environmentally optimized and waste-reduced workflows'
+    ];
   }
 }

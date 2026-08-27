@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { SeoService } from '../../core/services/seo.service';
 import { TranslationService } from '../../core/services/translation.service';
@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="contact-page fade-in-page">
       <!-- Banner -->
@@ -25,7 +25,7 @@ import Swal from 'sweetalert2';
           <!-- Col 1: Offices -->
           <div class="col-lg-5 mb-5 mb-lg-0">
             <h2 class="fw-bold mb-4 text-white">{{ ts.get('contact.info_heading') }}</h2>
-            
+
             <div class="card p-4 border rounded-lg mb-4 glass-panel" style="border-color: var(--glass-border) !important;">
               <h5 class="fw-bold text-primary mb-3">{{ ts.get('contact.office') }} - Zanzibar</h5>
               <p class="text-white-50 small mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i>{{contactAddress()}}</p>
@@ -35,9 +35,9 @@ import Swal from 'sweetalert2';
 
             <div class="card p-4 border rounded-lg glass-panel" style="border-color: var(--glass-border) !important;">
               <h5 class="fw-bold text-primary mb-3">{{ ts.get('contact.office') }} - Pemba</h5>
-              <p class="text-white-50 small mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i>Chamanangwe, Pemba, Zanzibar</p>
-              <p class="text-white-50 small mb-2"><i class="bi bi-telephone me-2 text-primary"></i>+255 777 471 849</p>
-              <p class="text-white-50 small mb-0"><i class="bi bi-envelope me-2 text-primary"></i>{{contactEmail()}}</p>
+              <p class="text-white-50 small mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i>{{pembaAddress()}}</p>
+              <p class="text-white-50 small mb-2"><i class="bi bi-telephone me-2 text-primary"></i>{{pembaPhone()}}</p>
+              <p class="text-white-50 small mb-0"><i class="bi bi-envelope me-2 text-primary"></i>{{pembaEmail()}}</p>
             </div>
           </div>
 
@@ -46,25 +46,47 @@ import Swal from 'sweetalert2';
             <div class="card p-4 border rounded-lg glass-panel" style="border-color: var(--glass-border) !important;">
               <h2 class="fw-bold mb-3 text-white">{{ ts.get('contact.heading') }}</h2>
               <p class="text-white-50 small mb-4">{{ ts.get('contact.sub') }}</p>
-              
-              <form (submit)="onSubmit()">
+
+              <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
                 <div class="mb-3">
                   <label class="form-label text-white-50 small">{{ ts.get('contact.name') }}</label>
-                  <input type="text" class="form-control text-white bg-transparent border-secondary shadow-none" [(ngModel)]="form.name" name="name" required>
+                  <input type="text" class="form-control text-white bg-transparent border-secondary shadow-none"
+                         formControlName="name"
+                         [class.is-invalid]="name.invalid && name.dirty">
+                  <div class="invalid-feedback d-block" *ngIf="name.invalid && name.dirty">
+                    {{ ts.get('validation.required') }}
+                  </div>
                 </div>
                 <div class="mb-3">
                   <label class="form-label text-white-50 small">{{ ts.get('contact.email') }}</label>
-                  <input type="email" class="form-control text-white bg-transparent border-secondary shadow-none" [(ngModel)]="form.email" name="email" required>
+                  <input type="email" class="form-control text-white bg-transparent border-secondary shadow-none"
+                         formControlName="email"
+                         [class.is-invalid]="email.invalid && email.dirty">
+                  <div class="invalid-feedback d-block" *ngIf="email.invalid && email.dirty">
+                    {{ email.errors?.['required'] ? ts.get('validation.required') : ts.get('validation.email') }}
+                  </div>
                 </div>
                 <div class="mb-3">
                   <label class="form-label text-white-50 small">{{ ts.get('contact.subject') }}</label>
-                  <input type="text" class="form-control text-white bg-transparent border-secondary shadow-none" [(ngModel)]="form.subject" name="subject" required>
+                  <input type="text" class="form-control text-white bg-transparent border-secondary shadow-none"
+                         formControlName="subject"
+                         [class.is-invalid]="subject.invalid && subject.dirty">
+                  <div class="invalid-feedback d-block" *ngIf="subject.invalid && subject.dirty">
+                    {{ ts.get('validation.required') }}
+                  </div>
                 </div>
                 <div class="mb-4">
                   <label class="form-label text-white-50 small">{{ ts.get('contact.message') }}</label>
-                  <textarea class="form-control text-white bg-transparent border-secondary shadow-none" rows="5" [(ngModel)]="form.message" name="message" required></textarea>
+                  <textarea class="form-control text-white bg-transparent border-secondary shadow-none" rows="5"
+                            formControlName="message"
+                            [class.is-invalid]="message.invalid && message.dirty"></textarea>
+                  <div class="invalid-feedback d-block" *ngIf="message.invalid && message.dirty">
+                    {{ message.errors?.['required'] ? ts.get('validation.required') : ts.get('validation.minlength') }}
+                  </div>
                 </div>
-                <button type="submit" class="btn btn-primary rounded-pill w-100 py-2.5">{{ ts.get('contact.btn_send') }}</button>
+                <button type="submit" class="btn btn-primary rounded-pill w-100 py-2.5" [disabled]="submitting()">
+                  {{ ts.get('contact.btn_send') }}
+                </button>
               </form>
             </div>
           </div>
@@ -74,23 +96,38 @@ import Swal from 'sweetalert2';
   `
 })
 export class ContactComponent implements OnInit {
-  form = {
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  };
+  form: FormGroup;
+  submitting = signal(false);
 
   bannerImage = signal('/project3.jpg');
   contactEmail = signal('info@unitedram.com');
   contactPhone = signal('+255 777 412 337');
   contactAddress = signal('Mbweni, Zanzibar, Tanzania');
+  pembaAddress = signal('Chamanangwe, Pemba, Zanzibar');
+  pembaPhone = signal('+255 777 471 849');
+  pembaEmail = signal('info@unitedram.com');
 
   constructor(
+    private fb: FormBuilder,
     private apiSvc: PublicApiService,
     private seo: SeoService,
     public ts: TranslationService
-  ) {}
+  ) {
+    // Reactive form with live (updateOn: 'change') validators — errors are
+    // recomputed on every keystroke, not just on blur/submit like the old
+    // template-driven + native HTML5 "required"/"type=email" attributes did.
+    this.form = this.fb.group({
+      name: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      subject: ['', [Validators.required]],
+      message: ['', [Validators.required, Validators.minLength(10)]],
+    });
+  }
+
+  get name() { return this.form.get('name')!; }
+  get email() { return this.form.get('email')!; }
+  get subject() { return this.form.get('subject')!; }
+  get message() { return this.form.get('message')!; }
 
   ngOnInit(): void {
     this.seo.generateTags('contact');
@@ -102,25 +139,35 @@ export class ContactComponent implements OnInit {
         if (d.contact_email) this.contactEmail.set(d.contact_email);
         if (d.contact_phone) this.contactPhone.set(d.contact_phone);
         if (d.contact_address) this.contactAddress.set(d.contact_address);
+        if (d.contact_pemba_address) this.pembaAddress.set(d.contact_pemba_address);
+        if (d.contact_pemba_phone) this.pembaPhone.set(d.contact_pemba_phone);
+        if (d.contact_pemba_email) this.pembaEmail.set(d.contact_pemba_email);
       }
     });
   }
 
   onSubmit(): void {
-    if (!this.form.name || !this.form.email || !this.form.subject || !this.form.message) {
-      Swal.fire('Warning', 'Please complete all form fields.', 'warning');
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      // markAsDirty too, so the *ngIf error blocks (which key off `.dirty`,
+      // not `.touched`) light up immediately on a submit attempt as well.
+      Object.values(this.form.controls).forEach(c => c.markAsDirty());
+      Swal.fire('Warning', 'Please correct the highlighted fields.', 'warning');
       return;
     }
 
-    Swal.fire({ title: 'Sending...', didOpen: () => Swal.showLoading() });
-    this.apiSvc.submitContactForm(this.form).subscribe({
+    this.submitting.set(true);
+    Swal.fire({ title: this.ts.get('contact.sending'), didOpen: () => Swal.showLoading() });
+    this.apiSvc.submitContactForm(this.form.value).subscribe({
       next: () => {
-        Swal.fire('Success', 'Your message has been sent successfully!', 'success');
-        this.form = { name: '', email: '', subject: '', message: '' };
+        this.submitting.set(false);
+        Swal.fire('Success', this.ts.get('contact.success'), 'success');
+        this.form.reset();
       },
       error: () => {
+        this.submitting.set(false);
         Swal.fire('Success', 'Message received (Mock mode)', 'success');
-        this.form = { name: '', email: '', subject: '', message: '' };
+        this.form.reset();
       }
     });
   }

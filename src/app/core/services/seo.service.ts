@@ -2,12 +2,13 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SeoService {
-  private apiUrl = 'http://localhost:3000/api/public/seo';
+  private apiUrl = `${environment.apiUrl}/seo`;
 
   constructor(
     private titleSvc: Title,

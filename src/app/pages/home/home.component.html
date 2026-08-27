@@ -15,8 +15,8 @@
           <div class="row">
             <div class="col-lg-8 animate-text-container">
               <span class="badge bg-primary text-uppercase px-3 py-2 mb-3 fw-bold tracking-wider slide-up-in" style="font-size:12px">{{ ts.get('home.slider_badge') }}</span>
-              <h1 class="display-3 fw-800 mb-3 slide-up-in" style="line-height: 1.1; font-family: var(--font-family-title);">{{s.title}}</h1>
-              <p class="fs-5 text-light mb-5 slide-up-in" style="max-width: 600px; font-weight: 300;">{{s.subtitle}}</p>
+              <h1 class="display-3 fw-800 mb-3 slide-up-in" style="line-height: 1.1; font-family: var(--font-family-title);">{{ts.pick(s.title, s.title_sw)}}</h1>
+              <p class="fs-5 text-light mb-5 slide-up-in" style="max-width: 600px; font-weight: 300;">{{ts.pick(s.subtitle, s.subtitle_sw)}}</p>
               <div class="d-flex gap-3 slide-up-in">
                 <a [routerLink]="s.primaryLink" class="btn btn-primary btn-lg rounded-pill px-4 shadow-lg">
                   {{ s.primaryBtn === 'Explore Services' ? ts.get('home.btn_services') : (s.primaryBtn === 'View Portfolio' ? ts.get('home.btn_portfolio') : s.primaryBtn) }}
@@ -77,8 +77,8 @@
   <section class="accordion-showcase-section py-5 bg-transparent">
     <div class="container py-4">
       <div class="section-header">
-        <span class="subtitle">{{showcaseSubtitle()}}</span>
-        <h2 class="title">{{showcaseTitle()}}</h2>
+        <span class="subtitle">{{ts.pick(showcaseSubtitle(), showcaseSubtitleSw())}}</span>
+        <h2 class="title">{{ts.pick(showcaseTitle(), showcaseTitleSw())}}</h2>
       </div>
       
       <div class="image-accordion-wrapper d-flex gap-3 mt-5 flex-md-row flex-column" style="height: 480px;">
@@ -87,8 +87,8 @@
              [attr.data-title]="item.title"
              [style.background-image]="'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.75)), url(' + resolveImage(item.image) + ')'">
           <div class="accordion-content position-absolute p-4 text-white">
-            <h4 class="fw-bold m-0">{{item.title}}</h4>
-            <p class="small text-white-50 m-0 mt-2">{{item.subtitle || 'United Ram Engineering Excellency'}}</p>
+            <h4 class="fw-bold m-0">{{ts.pick(item.title, item.title_sw)}}</h4>
+            <p class="small text-white-50 m-0 mt-2">{{ts.pick(item.subtitle, item.subtitle_sw) || 'United Ram Engineering Excellency'}}</p>
           </div>
         </div>
       </div>
@@ -99,8 +99,8 @@
   <section class="services-section py-5 bg-transparent">
     <div class="container py-4">
       <div class="section-header">
-        <span class="subtitle">{{servicesSubtitle()}}</span>
-        <h2 class="title">{{servicesTitle()}}</h2>
+        <span class="subtitle">{{ts.pick(servicesSubtitle(), servicesSubtitleSw())}}</span>
+        <h2 class="title">{{ts.pick(servicesTitle(), servicesTitleSw())}}</h2>
       </div>
       
       <div class="row mt-4">
@@ -111,8 +111,8 @@
               <div class="service-icon mb-4 d-inline-flex align-items-center justify-content-center bg-light text-primary rounded-circle" style="width: 70px; height: 70px;">
                 <i class="bi {{svc.icon || 'bi-gear'}} fs-3"></i>
               </div>
-              <h4 class="fw-bold mb-3">{{svc.title}}</h4>
-              <p class="text-secondary small mb-4">{{svc.description}}</p>
+              <h4 class="fw-bold mb-3">{{ts.pick(svc.title, svc.title_sw)}}</h4>
+              <p class="text-secondary small mb-4">{{ts.pick(svc.description, svc.description_sw)}}</p>
               <a [routerLink]="['/services', svc.id]" class="btn btn-sm btn-outline-primary rounded-pill px-3">Read Details</a>
             </div>
           </div>
@@ -169,8 +169,8 @@
   <section class="projects-section py-5 bg-transparent">
     <div class="container py-4">
       <div class="section-header">
-        <span class="subtitle">{{projectsSubtitle()}}</span>
-        <h2 class="title">{{projectsTitle()}}</h2>
+        <span class="subtitle">{{ts.pick(projectsSubtitle(), projectsSubtitleSw())}}</span>
+        <h2 class="title">{{ts.pick(projectsTitle(), projectsTitleSw())}}</h2>
       </div>
       <div class="row mt-4">
         <div *ngFor="let p of featuredProjects()" class="col-lg-6 col-12 mb-4">
@@ -184,9 +184,9 @@
                   <span class="badge bg-secondary mb-0">{{p.category}}</span>
                   <small class="text-white-50"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ ts.get('projects.location') }}: {{p.location}}</small>
                 </div>
-                <h3 class="fw-bold text-white mb-2 project-title">{{p.name}}</h3>
+                <h3 class="fw-bold text-white mb-2 project-title">{{ts.pick(p.name, p.name_sw)}}</h3>
                 <p class="project-desc text-white-50 small mb-0">
-                  {{ p.description || 'Premium infrastructure delivery including advanced structural work, civil works, and engineering excellence.' }}
+                  {{ ts.pick(p.description, p.description_sw) || 'Premium infrastructure delivery including advanced structural work, civil works, and engineering excellence.' }}
                 </p>
                 <a [routerLink]="['/projects', p.id]" class="btn btn-sm btn-primary rounded-pill px-4 align-self-start mt-3">
                   {{ ts.get('projects.view_details') }}
@@ -244,10 +244,10 @@
   </section>
 
   <!-- CALL TO ACTION (LET'S MAKE SOMETHING TOGETHER) -->
-  <section class="cta-section py-5 text-white" style="background: linear-gradient(135deg, var(--primary-color), var(--dark-color));">
+  <section class="cta-section py-5 text-white">
     <div class="container py-5 text-center">
-      <h2 class="display-5 fw-bold text-white mb-3 text-uppercase">{{ctaTitle()}}</h2>
-      <p class="fs-5 text-white-50 mb-5" style="max-width: 600px; margin: auto;">{{ctaSubtitle()}}</p>
+      <h2 class="display-5 fw-bold text-white mb-3 text-uppercase">{{ts.pick(ctaTitle(), ctaTitleSw())}}</h2>
+      <p class="fs-5 text-white-50 mb-5" style="max-width: 600px; margin: auto;">{{ts.pick(ctaSubtitle(), ctaSubtitleSw())}}</p>
       <a routerLink="/contact" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-primary tracking-wider shadow-lg">{{ ts.get('home.cta_btn') }}</a>
     </div>
   </section>
@@ -265,12 +265,12 @@
             <div *ngFor="let item of faqs; let i = index" class="accordion-item mb-3 border rounded">
               <h2 class="accordion-header">
                 <button class="accordion-button fw-bold" type="button" [class.collapsed]="!item.open()" (click)="toggleFaq(i)">
-                  {{item.q}}
+                  {{ts.pick(item.q, item.q_sw)}}
                 </button>
               </h2>
               <div class="accordion-collapse collapse" [class.show]="item.open()">
                 <div class="accordion-body text-secondary small bg-white">
-                  {{item.a}}
+                  {{ts.pick(item.a, item.a_sw)}}
                 </div>
               </div>
             </div>

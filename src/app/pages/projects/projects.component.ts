@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, signal, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -51,20 +51,20 @@ import { TranslationService } from '../../core/services/translation.service';
 
         <!-- Projects Grid -->
         <div class="row">
-          @for (p of projects(); track p.id) {
+          @for (p of pagedProjects(); track p.id) {
             <div class="col-md-6 mb-4">
               <div class="card h-100 border rounded-lg overflow-hidden glass-panel" style="transition: all 0.4s ease; border-color: var(--glass-border) !important;">
                 <div class="position-relative" style="height: 260px; overflow:hidden;">
                   <img [src]="p.image || '/project3.jpg'" loading="lazy" class="card-img-top w-100 h-100" style="object-fit: cover; transition: transform 0.6s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                  <span class="badge position-absolute top-0 end-0 m-3 text-uppercase" style="background: var(--gold-gradient); font-size:11px; font-weight:700; letter-spacing:0.5px;">{{ p.status }}</span>
+                  <span class="badge position-absolute top-0 end-0 m-3 text-uppercase" style="background: var(--gold-gradient); font-size:11px; font-weight:700; letter-spacing:0.5px;">{{ ts.statusLabel(p.status) }}</span>
                 </div>
                 <div class="card-body p-4 d-flex flex-column">
                   <div class="d-flex justify-content-between align-items-center mb-3">
                     <span class="badge bg-secondary text-uppercase small" style="letter-spacing: 0.5px;">{{ p.category || 'Civil Works' }}</span>
                     <small class="text-white-50"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ ts.get('projects.location') }}: {{ p.location || 'Zanzibar' }}</small>
                   </div>
-                  <h4 class="fw-bold mb-3 text-white" style="font-size:1.35rem; line-height:1.2;">{{ p.name }}</h4>
-                  <p class="text-white-50 small leading-relaxed mb-4 flex-grow-1">{{ p.description }}</p>
+                  <h4 class="fw-bold mb-3 text-white" style="font-size:1.35rem; line-height:1.2;">{{ ts.pick(p.name, p.name_sw) }}</h4>
+                  <p class="text-white-50 small leading-relaxed mb-4 flex-grow-1">{{ ts.pick(p.description, p.description_sw) }}</p>
                   
                   <a [routerLink]="['/projects', p.id]" class="btn btn-sm btn-outline-light rounded-pill align-self-start px-4">
                     {{ ts.get('projects.view_details') }} <i class="bi bi-arrow-right ms-1 text-primary"></i>
@@ -80,17 +80,40 @@ import { TranslationService } from '../../core/services/translation.service';
             </div>
           }
         </div>
+
+        <!-- Lazy loading: more cards reveal automatically while scrolling; -->
+        <!-- the button is a manual fallback for anyone who prefers to click. -->
+        @if (hasMore()) {
+          <div class="text-center mt-4">
+            <div class="spinner-border text-primary spinner-border-sm mb-2" *ngIf="loadingMore()"></div>
+            <button class="btn btn-outline-light rounded-pill px-4" (click)="loadMore()" [disabled]="loadingMore()">
+              Load More Projects
+            </button>
+          </div>
+        }
+        <!-- Sentinel element the IntersectionObserver watches to auto-load more -->
+        <div #scrollAnchor style="height:1px;"></div>
       </div>
     </div>
   `
 })
-export class ProjectsComponent implements OnInit {
+export class ProjectsComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('scrollAnchor') scrollAnchor?: ElementRef<HTMLDivElement>;
+
   projects = signal<any[]>([]);
   filters = { search: '', type: '', status: '' };
   bannerImage = signal('/project3.jpg');
 
+  // Lazy loading — reveal projects in batches as the user scrolls, instead
+  // of paged navigation (public project list — modest row counts, no need
+  // to hit the server again; we just slice further into what's already loaded).
+  visibleCount = signal(6);
+  pageSize = 6;
+  loadingMore = signal(false);
+  private observer?: IntersectionObserver;
+
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private apiSvc: PublicApiService,
     private seo: SeoService,
     public ts: TranslationService,
@@ -113,6 +136,20 @@ export class ProjectsComponent implements OnInit {
         }
       });
     }
+  }
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId) || !this.scrollAnchor) return;
+    this.observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && this.hasMore() && !this.loadingMore()) {
+        this.loadMore();
+      }
+    }, { rootMargin: '200px' }); // start loading a bit before the sentinel is actually on screen
+    this.observer.observe(this.scrollAnchor.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
   }
 
   load(): void {
@@ -144,11 +181,31 @@ export class ProjectsComponent implements OnInit {
       } else {
         this.projects.set([]);
       }
+      this.visibleCount.set(this.pageSize);
     });
   }
 
   clearFilters(): void {
     this.filters = { search: '', type: '', status: '' };
     this.load();
+  }
+
+  pagedProjects(): any[] {
+    return this.projects().slice(0, this.visibleCount());
+  }
+
+  hasMore(): boolean {
+    return this.visibleCount() < this.projects().length;
+  }
+
+  loadMore(): void {
+    if (!this.hasMore()) return;
+    // Tiny delay so the spinner/button feedback is visible even though this
+    // is just revealing more of an already-fetched list, not a new request.
+    this.loadingMore.set(true);
+    setTimeout(() => {
+      this.visibleCount.set(this.visibleCount() + this.pageSize);
+      this.loadingMore.set(false);
+    }, 200);
   }
 }

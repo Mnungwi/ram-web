@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { careersGuard } from './core/guards/careers.guard';
 
 export const routes: Routes = [
   {
@@ -15,22 +15,14 @@ export const routes: Routes = [
       { path: 'gallery', loadComponent: () => import('./pages/gallery/gallery.component').then(m => m.GalleryComponent) },
       { path: 'news', loadComponent: () => import('./pages/news/news.component').then(m => m.NewsComponent) },
       { path: 'news/:id', loadComponent: () => import('./pages/news/news-detail/news-detail.component').then(m => m.NewsDetailComponent) },
-      { path: 'careers', loadComponent: () => import('./pages/careers/careers.component').then(m => m.CareersComponent) },
+      { path: 'careers', loadComponent: () => import('./pages/careers/careers.component').then(m => m.CareersComponent), canActivate: [careersGuard] },
       { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent) },
     ]
   },
-  {
-    path: 'admin',
-    loadComponent: () => import('./layouts/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
-    children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'login', loadComponent: () => import('./pages/admin/login/login.component').then(m => m.LoginComponent) },
-      { path: 'dashboard', loadComponent: () => import('./pages/admin/dashboard/dashboard.component').then(m => m.DashboardComponent), canActivate: [authGuard] },
-      { path: 'projects', loadComponent: () => import('./pages/admin/projects/projects.component').then(m => m.AdminProjectsComponent), canActivate: [authGuard] },
-      { path: 'services', loadComponent: () => import('./pages/admin/services/services.component').then(m => m.AdminServicesComponent), canActivate: [authGuard] },
-      { path: 'news', loadComponent: () => import('./pages/admin/news/news.component').then(m => m.AdminNewsComponent), canActivate: [authGuard] },
-      { path: 'gallery', loadComponent: () => import('./pages/admin/gallery/gallery.component').then(m => m.AdminGalleryComponent), canActivate: [authGuard] }
-    ]
-  },
+  // NOTE: the website used to also embed its own mini admin CMS at /admin
+  // (own localStorage-token login, no shared AuthService/interceptor). It
+  // duplicated the real admin app's Website Manager modules and was removed
+  // as a redundant/insecure surface — manage all website content from the
+  // real admin app instead.
   { path: '**', redirectTo: '' }
 ];

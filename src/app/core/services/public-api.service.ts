@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface ProjectData {
   id: string;
@@ -23,7 +24,7 @@ export interface ProjectData {
   providedIn: 'root'
 })
 export class PublicApiService {
-  private apiUrl = 'http://localhost:3000/api/public'; // Backend URL
+  private apiUrl = environment.apiUrl;
 
   // Signals for state
   isLoading = signal(false);
@@ -116,16 +117,12 @@ export class PublicApiService {
   }
 
   getGallery(params?: any): Observable<any> {
+    // NOTE: this used to fall back to 4 fixed demo photos on any error —
+    // harmless for the general Gallery page, but actively misleading for a
+    // single project's page (every project would show the same "borrowed"
+    // photos). An honest empty result is safer for both callers.
     return this.http.get<any>(`${this.apiUrl}/gallery`, { params }).pipe(
-      catchError(() => of({
-        success: true,
-        data: [
-          { imageUrl: '/malindi2.jpg', caption: 'ZSSF Malindi Car Parking Project Zanzibar', type: 'photo' },
-          { imageUrl: '/mbweni-4.png', caption: 'Proposed Sport and Business Facilities at Mbweni', type: 'photo' },
-          { imageUrl: '/tunguu1.jpg', caption: 'Warehouse Construction Site at Tunguu Zanzibar', type: 'drone' },
-          { imageUrl: '/kengeja.jpg', caption: 'Kengeja Technical Secondary School Hostel Building', type: 'drone' }
-        ]
-      }))
+      catchError(() => of({ success: true, data: [] }))
     );
   }
 }

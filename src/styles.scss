@@ -8,6 +8,26 @@
 @import "swiper/css/navigation";
 @import "swiper/css/pagination";
 
+// ── Self-hosted bootstrap-icons font override ──
+// bootstrap-icons.css above references its own font via a relative
+// url("./fonts/bootstrap-icons.woff2?<hash>"). With SSR enabled, `ng serve`
+// routes any request that isn't a recognized bundle asset through the
+// Angular app's own router before falling back to a static-file check —
+// and that path doesn't match a real route, so the app's wildcard route
+// (`{ path: '**', redirectTo: '' }` in app.routes.ts) 302-redirects it to
+// "/", which the browser receives instead of font bytes and rejects
+// ("downloadable font: rejected by sanitizer") — breaking every bi-* icon
+// site-wide. Files under `public/` are always copied to the output root
+// and served directly and reliably in both dev and prod, so the fix is to
+// self-host a copy there (public/fonts/) and re-declare @font-face pointing
+// at it — this later rule wins over the import above for the same family.
+@font-face {
+  font-display: block;
+  font-family: "bootstrap-icons";
+  src: url("/fonts/bootstrap-icons.woff2") format("woff2"),
+       url("/fonts/bootstrap-icons.woff") format("woff");
+}
+
 // ── Premium Google Fonts ──
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
 

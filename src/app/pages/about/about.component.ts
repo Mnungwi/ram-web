@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { SeoService } from '../../core/services/seo.service';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { TranslationService } from '../../core/services/translation.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-about',
@@ -22,9 +23,9 @@ import { TranslationService } from '../../core/services/translation.service';
       <section class="who-we-are py-5 bg-dark">
         <div class="container py-4 text-center" style="max-width: 800px;">
           <span class="subtitle text-primary fw-bold text-uppercase d-block mb-2" style="letter-spacing: 2px;">{{ ts.get('about.who_title') }}</span>
-          <h2 class="fw-bold mb-4 text-white">United Ram Construction Company Ltd</h2>
+          <h2 class="fw-bold mb-4 text-white">{{ ts.pick(companyName(), companyNameSw()) }}</h2>
           <p class="text-white-50 fs-5 leading-relaxed">
-            {{ whoWeAre() }}
+            {{ ts.pick(whoWeAre(), whoWeAreSw()) }}
           </p>
         </div>
       </section>
@@ -40,7 +41,7 @@ import { TranslationService } from '../../core/services/translation.service';
                   <h3 class="fw-bold mb-0 text-white">{{ ts.get('about.vision_title') }}</h3>
                 </div>
                 <p class="text-white-50 leading-relaxed">
-                  {{ vision() }}
+                  {{ ts.pick(vision(), visionSw()) }}
                 </p>
               </div>
             </div>
@@ -51,7 +52,7 @@ import { TranslationService } from '../../core/services/translation.service';
                   <h3 class="fw-bold mb-0 text-white">{{ ts.get('about.mission_title') }}</h3>
                 </div>
                 <p class="text-white-50 leading-relaxed">
-                  {{ mission() }}
+                  {{ ts.pick(mission(), missionSw()) }}
                 </p>
               </div>
             </div>
@@ -70,7 +71,7 @@ import { TranslationService } from '../../core/services/translation.service';
               <span class="text-primary fw-bold text-uppercase d-block mb-2">{{ ts.get('about.leadership_msg') }}</span>
               <h2 class="fw-bold mb-3 text-white">{{ ts.get('about.md_title') }}</h2>
               <p class="text-white-50 fs-5 fst-italic leading-relaxed">
-                "{{ mdQuote() }}"
+                "{{ ts.pick(mdQuote(), mdQuoteSw()) }}"
               </p>
               <h5 class="fw-bold mb-0 mt-4 text-white text-uppercase">{{ mdName() }}</h5>
               <small class="text-white-50">{{ ts.get('about.md_role') }}</small>
@@ -99,7 +100,7 @@ import { TranslationService } from '../../core/services/translation.service';
                   <img [src]="resolveImage(item.photo)" [alt]="item.name" class="rounded-circle border p-1" style="width: 100px; height: 100px; object-fit: cover;" [style.border-color]="item.role.toLowerCase().includes('managing') ? 'var(--secondary-color) !important' : 'rgba(255,255,255,0.1) !important'">
                 </div>
                 <h4 class="fw-bold mb-1 text-uppercase" [class.text-primary]="item.role.toLowerCase().includes('managing')" [class.text-white]="!item.role.toLowerCase().includes('managing')" style="font-size:1.15rem;">{{ item.name }}</h4>
-                <p class="text-white-50 small mb-3">{{ item.role }}</p>
+                <p class="text-white-50 small mb-3">{{ ts.pick(item.role, item.role_sw) }}</p>
                 <div class="pt-3 border-top small text-white-50" style="border-color: rgba(255,255,255,0.08) !important;">
                   <p class="mb-1" *ngIf="item.phone"><i class="bi bi-telephone me-1 text-primary"></i><a [href]="'tel:' + item.phone" class="text-decoration-none text-white-50">{{ item.phone }}</a></p>
                   <p class="mb-0" *ngIf="item.email"><i class="bi bi-envelope me-1 text-primary"></i><a [href]="'mailto:' + item.email" class="text-decoration-none text-white-50">{{ item.email }}</a></p>
@@ -125,7 +126,7 @@ import { TranslationService } from '../../core/services/translation.service';
                   <img [src]="resolveImage(item.photo)" [alt]="item.name" class="rounded-circle border p-1" style="width: 80px; height: 80px; object-fit: cover; border-color: rgba(255,255,255,0.1) !important;">
                 </div>
                 <h4 class="fw-bold mb-1 text-white text-uppercase" style="font-size:1.15rem;">{{ item.name }}</h4>
-                <p class="text-white-50 small mb-3">{{ item.role }}</p>
+                <p class="text-white-50 small mb-3">{{ ts.pick(item.role, item.role_sw) }}</p>
                 <div class="pt-3 border-top small text-white-50" style="border-color: rgba(255,255,255,0.08) !important;">
                   <p class="mb-1" *ngIf="item.phone"><i class="bi bi-telephone me-1 text-primary"></i><a [href]="'tel:' + item.phone" class="text-decoration-none text-white-50">{{ item.phone }}</a></p>
                   <p class="mb-0" *ngIf="item.email"><i class="bi bi-envelope me-1 text-primary"></i><a [href]="'mailto:' + item.email" class="text-decoration-none text-white-50">{{ item.email }}</a></p>
@@ -139,14 +140,20 @@ import { TranslationService } from '../../core/services/translation.service';
   `
 })
 export class AboutComponent implements OnInit {
+  companyName = signal('United Ram Construction Company Ltd');
+  companyNameSw = signal('');
   whoWeAre = signal('United Ram Construction was established and incorporated under the Zanzibar Companies Decree, Cap 153. United Ram Construction is a well-established firm proud of its qualified staff, carrying extensive, multi-year experience in design, estimation, and heavy civil construction works.');
+  whoWeAreSw = signal('');
   vision = signal('To be one among the best building construction companies in Zanzibar, serving both government and private customers by providing exceptional buildings, reliable networks, and better services.');
+  visionSw = signal('');
   mission = signal('To execute engineering and construction services safely, efficiently, and to the highest standards of quality while maintaining environmental care and customer satisfaction.');
+  missionSw = signal('');
   bannerImage = signal('/project3.jpg');
 
   // Dynamic MD message inputs
   mdName = signal('MOHAMMED MUHIDDIN CHACHE');
   mdQuote = signal('Our journey has been defined by our commitment to engineering excellence. We continue to adapt to sustainable development goals, ensuring that every bridge, road, and building we erect is built for generations to come.');
+  mdQuoteSw = signal('');
   mdPhoto = signal('/managing-director.jpg');
   mdPhone = signal('+255 777 412 337');
   mdEmail = signal('managing_director@unitedram.com');
@@ -177,14 +184,20 @@ export class AboutComponent implements OnInit {
       this.apiSvc.getSettings().subscribe(res => {
         if (res.success && res.data) {
           const d = res.data;
+          if (d.about_company_name) this.companyName.set(d.about_company_name);
+          if (d.about_company_name_sw) this.companyNameSw.set(d.about_company_name_sw);
           if (d.about_who_we_are) this.whoWeAre.set(d.about_who_we_are);
+          if (d.about_who_we_are_sw) this.whoWeAreSw.set(d.about_who_we_are_sw);
           if (d.about_vision) this.vision.set(d.about_vision);
+          if (d.about_vision_sw) this.visionSw.set(d.about_vision_sw);
           if (d.about_mission) this.mission.set(d.about_mission);
+          if (d.about_mission_sw) this.missionSw.set(d.about_mission_sw);
           if (d.banner_about) this.bannerImage.set(d.banner_about);
 
           // MD details
           if (d.about_md_name) this.mdName.set(d.about_md_name);
           if (d.about_md_quote) this.mdQuote.set(d.about_md_quote);
+          if (d.about_md_quote_sw) this.mdQuoteSw.set(d.about_md_quote_sw);
           if (d.about_md_photo) this.mdPhoto.set(d.about_md_photo);
           if (d.about_md_phone) this.mdPhone.set(d.about_md_phone);
           if (d.about_md_email) this.mdEmail.set(d.about_md_email);
@@ -212,7 +225,7 @@ export class AboutComponent implements OnInit {
     }
     if (imagePath.startsWith('/uploads') || imagePath.startsWith('uploads')) {
       const path = imagePath.startsWith('/') ? imagePath : '/' + imagePath;
-      return 'http://localhost:3000' + path;
+      return environment.mediaUrl + path;
     }
     return imagePath;
   }
