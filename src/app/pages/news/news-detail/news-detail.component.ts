@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Title, Meta } from '@angular/platform-browser';
 import { PublicApiService } from '../../../core/services/public-api.service';
 import { TranslationService } from '../../../core/services/translation.service';
 
@@ -42,14 +43,26 @@ import { TranslationService } from '../../../core/services/translation.service';
 export class NewsDetailComponent implements OnInit {
   article = signal<any | null>(null);
 
-  constructor(private route: ActivatedRoute, private apiSvc: PublicApiService, public ts: TranslationService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private apiSvc: PublicApiService,
+    public ts: TranslationService,
+    private titleSvc: Title,
+    private metaSvc: Meta,
+  ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.apiSvc.getNews().subscribe(res => {
       if (res.success && id) {
         const match = res.data.find((n: any) => n.id === id);
-        this.article.set(match || res.data[0]);
+        const found = match || res.data[0];
+        this.article.set(found);
+        if (found) {
+          const title = this.ts.pick(found.title, found.title_sw);
+          this.titleSvc.setTitle(`${title} - News | United Ram Construction`);
+          this.metaSvc.updateTag({ name: 'description', content: this.ts.pick(found.summary, found.summary_sw) || '' });
+        }
       }
     });
   }

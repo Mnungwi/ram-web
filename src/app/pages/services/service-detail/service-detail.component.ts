@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Title, Meta } from '@angular/platform-browser';
 import { PublicApiService } from '../../../core/services/public-api.service';
 import { TranslationService } from '../../../core/services/translation.service';
 
@@ -57,14 +58,26 @@ export class ServiceDetailComponent implements OnInit {
   service = signal<any | null>(null);
   bannerImage = signal('/project3.jpg');
 
-  constructor(private route: ActivatedRoute, private apiSvc: PublicApiService, public ts: TranslationService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private apiSvc: PublicApiService,
+    public ts: TranslationService,
+    private titleSvc: Title,
+    private metaSvc: Meta,
+  ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.apiSvc.getServices().subscribe(res => {
       if (res.success && id) {
         const item = res.data.find((s: any) => s.id === id);
-        this.service.set(item || res.data[0]);
+        const found = item || res.data[0];
+        this.service.set(found);
+        if (found) {
+          const title = this.ts.pick(found.title, found.title_sw);
+          this.titleSvc.setTitle(`${title} - Services | United Ram Construction`);
+          this.metaSvc.updateTag({ name: 'description', content: this.ts.pick(found.description, found.description_sw) || '' });
+        }
       }
     });
 

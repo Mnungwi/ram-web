@@ -67,9 +67,28 @@
 
   .navbar-brand {
     .brand-text {
-      font-size: 24px;
-      letter-spacing: -1px;
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
     }
+    .brand-line {
+      font-family: var(--font-family-title);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+    .brand-sub {
+      margin-top: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      color: rgba(255, 255, 255, 0.55);
+    }
+  }
+
+  .brand-link:hover .brand-line span {
+    filter: brightness(1.15);
   }
 
   .nav-link {

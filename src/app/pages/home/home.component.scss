@@ -396,30 +396,32 @@
 
 // ── Call To Action ("Let's Make Something Together") ──
 //
-// No repeating pattern at all (grid, contour lines, or otherwise) — a
-// solid navy field with exactly one bold accent: a single gold wedge
-// bleeding in from the bottom-right corner, like a beam of light or a
-// site floodlight at dusk. One confident shape, quiet everywhere else.
+// Requested explicitly: a modern, attractive GRADIENT background. A rich
+// diagonal sweep through the brand's own navy → sapphire → gold, so it
+// reads as premium/on-brand rather than a generic purple-to-blue hero.
 .cta-section {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: var(--dark-color);
+  background: linear-gradient(
+    120deg,
+    var(--dark-color) 0%,
+    var(--primary-color) 45%,
+    var(--dark-accent) 75%,
+    #7a4a12 100%
+  );
   clip-path: polygon(0 28px, 100% 0, 100% 100%, 0 100%);
 
-  // The one accent shape — soft-edged, angled, low-opacity so it reads as
-  // light falling across the surface rather than a printed graphic.
+  // A soft warm glow bleeding from the corner where the gradient turns
+  // gold, so the transition feels like light rather than a hard stop.
   &::after {
     content: '';
     position: absolute;
-    right: -12%;
-    bottom: -60%;
-    width: 65%;
+    right: -15%;
+    bottom: -80%;
+    width: 70%;
     height: 220%;
-    background: var(--gold-gradient);
-    opacity: 0.16;
-    transform: rotate(-22deg);
-    filter: blur(2px);
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.45) 0%, transparent 70%);
     z-index: 0;
     pointer-events: none;
   }

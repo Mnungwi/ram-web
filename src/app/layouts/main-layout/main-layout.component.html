@@ -50,10 +50,13 @@
     <header class="navbar-wrapper" [class.scrolled]="isScrolled() || isMobileMenuOpen()">
       <nav class="navbar navbar-expand-lg container py-3">
         <!-- Logo -->
-        <a class="navbar-brand d-flex align-items-center" routerLink="/">
-          <img [src]="resolveImage(siteLogo())" alt="United Ram Logo" style="max-height: 40px; margin-right: 10px;">
-          <span class="brand-text fw-800 text-uppercase">
-            <span class="text-white">United</span><span class="text-secondary ms-1">Ram</span>
+        <a class="navbar-brand d-flex align-items-center brand-link" routerLink="/">
+          <img [src]="resolveImage(siteLogo())" alt="United Ram Logo" style="max-height: 40px; margin-right: 12px;">
+          <span class="brand-text">
+            <span class="brand-line">
+              <span class="text-white">UNITED</span><span class="text-secondary ms-1">RAM</span>
+            </span>
+            <span class="brand-sub">CONSTRUCTION</span>
           </span>
         </a>
 
@@ -91,8 +94,11 @@
         <!-- Col 1: About short -->
         <div class="col-lg-3 col-md-6 mb-4">
           <div class="footer-brand d-flex align-items-center mb-3">
-            <img [src]="siteLogo()" alt="United Ram Logo" style="max-height: 35px; margin-right: 8px;">
-            <span class="fw-bold text-uppercase text-white" style="font-size: 1.1rem; tracking-wider">United Ram</span>
+            <img [src]="siteLogo()" alt="United Ram Logo" style="max-height: 35px; margin-right: 10px;">
+            <span class="d-flex flex-column" style="line-height: 1;">
+              <span class="fw-bold text-uppercase text-white" style="font-size: 1.1rem; letter-spacing: 0.5px;">United Ram</span>
+              <span class="text-secondary" style="font-size: 10px; font-weight: 600; letter-spacing: 2px; margin-top: 3px;">CONSTRUCTION</span>
+            </span>
           </div>
           <p class="text-secondary small leading-relaxed">
             {{ footerAboutText() }}
