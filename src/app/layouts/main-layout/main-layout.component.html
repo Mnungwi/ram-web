@@ -37,6 +37,11 @@
               <li><a class="dropdown-item" href="javascript:void(0)" (click)="setLanguage('SW')">Kiswahili</a></li>
             </ul>
           </div>
+          <!-- Staff Portal Link -->
+          <span class="text-secondary">|</span>
+          <a href="https://portal.unitedram.com" target="_blank" class="text-white text-decoration-none small">
+          <i class="bi bi-speedometer2 me-1 text-primary"></i>{{ ts.get('topbar.portal') }}
+        </a>
           <!-- Staff Mail Link -->
           <span class="text-secondary">|</span>
           <a [href]="footerStaffMailUrl()" target="_blank" class="text-white text-decoration-none small">

@@ -24,7 +24,7 @@ import { TranslationService } from '../../../core/services/translation.service';
         <div class="container py-4">
           <div class="row">
             <div class="col-lg-8">
-              <h2 class="fw-bold mb-4">Service Overview</h2>
+              <h2 class="fw-bold mb-4 text-dark">Service Overview</h2>
               <p class="text-secondary leading-relaxed mb-4">
                 {{ ts.pick(service()!.description, service()!.description_sw) }}
               </p>
@@ -32,7 +32,7 @@ import { TranslationService } from '../../../core/services/translation.service';
                 {{ overviewText() }}
               </p>
 
-              <h4 class="fw-bold mb-4">Key Benefits</h4>
+              <h4 class="fw-bold mb-4 text-dark">Key Benefits</h4>
               <ul class="list-group list-group-flush mb-5">
                 <li class="list-group-item border-0 px-0 d-flex align-items-center" *ngFor="let b of benefits()">
                   <i class="bi bi-patch-check-fill text-primary me-3 fs-5"></i> {{ b }}
@@ -43,7 +43,7 @@ import { TranslationService } from '../../../core/services/translation.service';
             <div class="col-lg-4">
               <!-- Sidebar CTA -->
               <div class="card bg-light border-0 p-4 rounded-lg shadow-sm text-center">
-                <h5 class="fw-bold mb-3">Need Construction Consultation?</h5>
+                <h5 class="fw-bold mb-3 text-dark">Need Construction Consultation?</h5>
                 <p class="text-secondary small mb-4">Speak with our senior structural consultants and engineering managers today.</p>
                 <a routerLink="/contact" class="btn btn-primary rounded-pill w-100">Get a Free Quote</a>
               </div>
