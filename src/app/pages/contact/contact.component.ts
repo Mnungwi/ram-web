@@ -33,11 +33,36 @@ import Swal from 'sweetalert2';
               <p class="text-white-50 small mb-0"><i class="bi bi-envelope me-2 text-primary"></i>{{contactEmail()}}</p>
             </div>
 
-            <div class="card p-4 border rounded-lg glass-panel" style="border-color: var(--glass-border) !important;">
+            <div class="card p-4 border rounded-lg glass-panel mb-4" style="border-color: var(--glass-border) !important;">
               <h5 class="fw-bold text-primary mb-3">{{ ts.get('contact.office') }} - Pemba</h5>
               <p class="text-white-50 small mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i>{{pembaAddress()}}</p>
               <p class="text-white-50 small mb-2"><i class="bi bi-telephone me-2 text-primary"></i>{{pembaPhone()}}</p>
               <p class="text-white-50 small mb-0"><i class="bi bi-envelope me-2 text-primary"></i>{{pembaEmail()}}</p>
+            </div>
+
+            <!-- Social Media — DB-managed (Admin > Website Content > Branding &
+                 Contact Info); a platform's icon only appears once its URL is
+                 filled in, so an unconfigured platform never shows a dead link. -->
+            <div class="card p-4 border rounded-lg glass-panel" style="border-color: var(--glass-border) !important;" *ngIf="hasAnySocialLink()">
+              <h5 class="fw-bold text-primary mb-3">{{ ts.get('contact.follow_us') }}</h5>
+              <div class="d-flex flex-wrap gap-2">
+                <a *ngIf="socialFacebook()" [href]="socialFacebook()" target="_blank" rel="noopener"
+                   class="btn btn-outline-light rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2">
+                  <i class="bi bi-facebook"></i> Facebook
+                </a>
+                <a *ngIf="socialInstagram()" [href]="socialInstagram()" target="_blank" rel="noopener"
+                   class="btn btn-outline-light rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2">
+                  <i class="bi bi-instagram"></i> Instagram
+                </a>
+                <a *ngIf="socialTwitter()" [href]="socialTwitter()" target="_blank" rel="noopener"
+                   class="btn btn-outline-light rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2">
+                  <i class="bi bi-twitter-x"></i> Twitter / X
+                </a>
+                <a *ngIf="socialLinkedin()" [href]="socialLinkedin()" target="_blank" rel="noopener"
+                   class="btn btn-outline-light rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2">
+                  <i class="bi bi-linkedin"></i> LinkedIn
+                </a>
+              </div>
             </div>
           </div>
 
@@ -107,6 +132,14 @@ export class ContactComponent implements OnInit {
   pembaPhone = signal('+255 777 471 849');
   pembaEmail = signal('info@unitedram.com');
 
+  // Social media — DB-managed via website_settings (social_facebook/
+  // social_twitter/social_instagram/social_linkedin), same keys already
+  // saved by Admin > Website Content > Branding & Contact Info.
+  socialFacebook = signal('');
+  socialTwitter = signal('');
+  socialInstagram = signal('');
+  socialLinkedin = signal('');
+
   constructor(
     private fb: FormBuilder,
     private apiSvc: PublicApiService,
@@ -142,8 +175,16 @@ export class ContactComponent implements OnInit {
         if (d.contact_pemba_address) this.pembaAddress.set(d.contact_pemba_address);
         if (d.contact_pemba_phone) this.pembaPhone.set(d.contact_pemba_phone);
         if (d.contact_pemba_email) this.pembaEmail.set(d.contact_pemba_email);
+        if (d.social_facebook) this.socialFacebook.set(d.social_facebook);
+        if (d.social_twitter) this.socialTwitter.set(d.social_twitter);
+        if (d.social_instagram) this.socialInstagram.set(d.social_instagram);
+        if (d.social_linkedin) this.socialLinkedin.set(d.social_linkedin);
       }
     });
+  }
+
+  hasAnySocialLink(): boolean {
+    return !!(this.socialFacebook() || this.socialTwitter() || this.socialInstagram() || this.socialLinkedin());
   }
 
   onSubmit(): void {

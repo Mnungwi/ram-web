@@ -32,7 +32,7 @@ import { SeoService } from '../../core/services/seo.service';
                         <span class="badge bg-secondary">{{ item.category }}</span>
                         <small class="text-muted">{{ item.date | date:'dd MMM yyyy' }}</small>
                       </div>
-                      <h4 class="fw-bold mb-3">{{ ts.pick(item.title, item.title_sw) }}</h4>
+                      <h4 class="fw-bold mb-3" style="color:#111827">{{ ts.pick(item.title, item.title_sw) }}</h4>
                       <p class="text-secondary small mb-4 leading-relaxed">{{ ts.pick(item.summary, item.summary_sw) }}</p>
                       <a [routerLink]="['/news', item.id]" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                         {{ ts.get('news.read_more') }} <i class="bi bi-arrow-right ms-1"></i>
@@ -47,7 +47,7 @@ import { SeoService } from '../../core/services/seo.service';
           <div class="col-lg-4">
             <!-- Sidebar Widget -->
             <div class="card border p-4 rounded shadow-sm bg-white mb-4">
-              <h5 class="fw-bold mb-3 border-bottom pb-2">Topic Categories</h5>
+              <h5 class="fw-bold mb-3 border-bottom pb-2" style="color:#111827">Topic Categories</h5>
               <ul class="list-unstyled mb-0">
                 <li class="mb-2">
                   <a href="javascript:void(0)" (click)="activeCategory.set(null)"

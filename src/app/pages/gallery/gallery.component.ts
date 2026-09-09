@@ -20,9 +20,13 @@ import { TranslationService } from '../../core/services/translation.service';
 
       <!-- Category Selector -->
       <div class="container py-5 text-center">
-        <div class="btn-group rounded-pill overflow-hidden shadow-lg p-1 bg-dark" style="border: 1px solid var(--glass-border);">
-          <button *ngFor="let c of categories" 
-                  class="btn btn-outline-light px-4 py-2 border-0 rounded-pill" 
+        <!-- Individually-rounded pill buttons with a real gap between them —
+             was a Bootstrap .btn-group, which flushes adjacent buttons
+             together with zero space by design (segmented-control look). -->
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+          <button *ngFor="let c of categories"
+                  class="btn btn-outline-light bg-dark px-4 py-2 rounded-pill shadow-sm"
+                  style="border: 1px solid var(--glass-border);"
                   [class.active]="activeCategory() === c.id"
                   (click)="activeCategory.set(c.id)">
             {{ c.id === 'all' ? ts.get('gallery.all') : c.label }}
