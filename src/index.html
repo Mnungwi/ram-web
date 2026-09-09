@@ -23,10 +23,37 @@
               <div id="bottom" class="mask">
                 <div class="plane"></div>
               </div>
-              <p class="loader-text">UNITED<span>RAM</span><br><small>CONSTRUCTION</small></p>
+              <p class="loader-text" id="preloader-text">UNITED<span>RAM</span><br><small>CONSTRUCTION</small></p>
             </div>
         </div>
     </div>
   </div>
+  <script type="text/javascript">
+    // White-label splash screen — same DB-driven branding as the admin panel.
+    // Guesses the API origin as api.<this domain>; edit API_ORIGIN_OVERRIDE
+    // per client if a deployment doesn't follow that convention.
+    (function () {
+      var API_ORIGIN_OVERRIDE = null; // e.g. 'https://api.example.com'
+      var host = window.location.hostname.replace(/^www\./, '');
+      var apiOrigin = API_ORIGIN_OVERRIDE || (window.location.protocol + '//api.' + host);
+      fetch(apiOrigin + '/api/theme')
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          var data = (res && res.data) || {};
+          var textEl = document.getElementById('preloader-text');
+          var outerEl = document.getElementById('preloader');
+          if (data.theme_splash_title && textEl) {
+            var parts = data.theme_splash_title.split(' ');
+            var first = parts.shift() || '';
+            var rest = parts.join(' ');
+            textEl.innerHTML = first + '<span>' + rest + '</span>';
+          }
+          if (data.theme_splash_bg && outerEl) {
+            outerEl.style.background = data.theme_splash_bg;
+          }
+        })
+        .catch(function () { /* keep the default splash */ });
+    })();
+  </script>
 </body>
 </html>
