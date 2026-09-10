@@ -44,7 +44,7 @@ import { TranslationService } from '../../core/services/translation.service';
                     <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px; box-shadow: 0 4px 10px rgba(217,119,6,0.3);">
                       <i class="bi bi-zoom-in fs-5 text-white"></i>
                     </div>
-                    <h5 class="fw-bold mb-1 text-white text-truncate" style="font-size:1rem;">{{ item.caption || 'United Ram Construction' }}</h5>
+                    <h5 class="fw-bold mb-1 text-white text-truncate" style="font-size:1rem;" *ngIf="item.caption">{{ item.caption }}</h5>
                     <span class="badge bg-secondary text-uppercase small" style="font-size: 8px; letter-spacing:0.5px;">{{ item.type }}</span>
                   </div>
                 </div>

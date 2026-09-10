@@ -29,32 +29,31 @@ export class SeoService {
       contact: { title: 'Contact Us | United Ram Construction', description: 'Contact our offices for a quote.', keywords: 'contact, email, phone' }
     };
 
-    if (isPlatformBrowser(this.platformId)) {
-      this.http.get<any>(`${this.apiUrl}?pageKey=${pageKey}`).subscribe({
-        next: (res) => {
-          if (res && res.success && res.data) {
-            const seo = res.data;
-            this.titleSvc.setTitle(seo.title);
-            this.metaSvc.updateTag({ name: 'description', content: seo.description || '' });
-            this.metaSvc.updateTag({ name: 'keywords', content: seo.keywords || '' });
-            this.metaSvc.updateTag({ property: 'og:title', content: seo.title });
-            this.metaSvc.updateTag({ property: 'og:description', content: seo.description || '' });
-          }
-        },
-        error: () => {
-          // Fallback if backend API is not running
-          const fallback = defaultSEO[pageKey] || defaultSEO['home'];
-          this.titleSvc.setTitle(fallback.title);
-          this.metaSvc.updateTag({ name: 'description', content: fallback.description });
-          this.metaSvc.updateTag({ name: 'keywords', content: fallback.keywords });
-        }
-      });
-    } else {
-      // Set static defaults during Server Prerendering to avoid fetch connection failures
+    const applyFallback = () => {
       const fallback = defaultSEO[pageKey] || defaultSEO['home'];
       this.titleSvc.setTitle(fallback.title);
       this.metaSvc.updateTag({ name: 'description', content: fallback.description });
       this.metaSvc.updateTag({ name: 'keywords', content: fallback.keywords });
-    }
+    };
+
+    // Try the DB-driven SEO on both browser and server (runtime SSR can reach
+    // the API — the backend fills in from website_settings when a page has no
+    // seo_settings row). The hardcoded map is only a last resort, e.g. during
+    // build-time prerender when the API isn't up.
+    this.http.get<any>(`${this.apiUrl}?pageKey=${pageKey}`).subscribe({
+      next: (res) => {
+        if (res && res.success && res.data && res.data.title) {
+          const seo = res.data;
+          this.titleSvc.setTitle(seo.title);
+          this.metaSvc.updateTag({ name: 'description', content: seo.description || '' });
+          this.metaSvc.updateTag({ name: 'keywords', content: seo.keywords || '' });
+          this.metaSvc.updateTag({ property: 'og:title', content: seo.title });
+          this.metaSvc.updateTag({ property: 'og:description', content: seo.description || '' });
+        } else {
+          applyFallback();
+        }
+      },
+      error: () => applyFallback(),
+    });
   }
 }

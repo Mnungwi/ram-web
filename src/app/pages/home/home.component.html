@@ -88,7 +88,7 @@
              [style.background-image]="'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.75)), url(' + resolveImage(item.image) + ')'">
           <div class="accordion-content position-absolute p-4 text-white">
             <h4 class="fw-bold m-0">{{ts.pick(item.title, item.title_sw)}}</h4>
-            <p class="small text-white-50 m-0 mt-2">{{ts.pick(item.subtitle, item.subtitle_sw) || 'United Ram Engineering Excellency'}}</p>
+            <p class="small text-white-50 m-0 mt-2" *ngIf="ts.pick(item.subtitle, item.subtitle_sw)">{{ts.pick(item.subtitle, item.subtitle_sw)}}</p>
           </div>
         </div>
       </div>
