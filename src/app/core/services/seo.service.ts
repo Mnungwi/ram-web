@@ -36,24 +36,33 @@ export class SeoService {
       this.metaSvc.updateTag({ name: 'keywords', content: fallback.keywords });
     };
 
-    // Try the DB-driven SEO on both browser and server (runtime SSR can reach
-    // the API — the backend fills in from website_settings when a page has no
-    // seo_settings row). The hardcoded map is only a last resort, e.g. during
-    // build-time prerender when the API isn't up.
-    this.http.get<any>(`${this.apiUrl}?pageKey=${pageKey}`).subscribe({
-      next: (res) => {
-        if (res && res.success && res.data && res.data.title) {
-          const seo = res.data;
-          this.titleSvc.setTitle(seo.title);
-          this.metaSvc.updateTag({ name: 'description', content: seo.description || '' });
-          this.metaSvc.updateTag({ name: 'keywords', content: seo.keywords || '' });
-          this.metaSvc.updateTag({ property: 'og:title', content: seo.title });
-          this.metaSvc.updateTag({ property: 'og:description', content: seo.description || '' });
-        } else {
-          applyFallback();
-        }
-      },
-      error: () => applyFallback(),
-    });
+    // IMPORTANT: only call the API in the browser. This site does live SSR
+    // (outputMode: "server") — every page's ngOnInit also runs on the Node
+    // server for each request, and Angular's SSR render waits for pending
+    // HttpClient calls before it can respond. If that request is ever slow
+    // or unreachable from the server process, it blocks the ENTIRE page
+    // render (every visitor just sees an endless spinner) instead of
+    // failing one request. Keep the DB-driven SEO browser-only and swap the
+    // title in shortly after first paint; use the static map for the initial
+    // server-rendered HTML.
+    if (isPlatformBrowser(this.platformId)) {
+      this.http.get<any>(`${this.apiUrl}?pageKey=${pageKey}`).subscribe({
+        next: (res) => {
+          if (res && res.success && res.data && res.data.title) {
+            const seo = res.data;
+            this.titleSvc.setTitle(seo.title);
+            this.metaSvc.updateTag({ name: 'description', content: seo.description || '' });
+            this.metaSvc.updateTag({ name: 'keywords', content: seo.keywords || '' });
+            this.metaSvc.updateTag({ property: 'og:title', content: seo.title });
+            this.metaSvc.updateTag({ property: 'og:description', content: seo.description || '' });
+          } else {
+            applyFallback();
+          }
+        },
+        error: () => applyFallback(),
+      });
+    } else {
+      applyFallback();
+    }
   }
 }
