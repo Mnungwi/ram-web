@@ -33,7 +33,7 @@ import { SeoService } from '../../core/services/seo.service';
                         <small class="text-muted">{{ item.date | date:'dd MMM yyyy' }}</small>
                       </div>
                       <h4 class="fw-bold mb-3" style="color:#111827">{{ ts.pick(item.title, item.title_sw) }}</h4>
-                      <p class="text-secondary small mb-4 leading-relaxed">{{ ts.pick(item.summary, item.summary_sw) }}</p>
+                      <p class="text-secondary small mb-4 leading-relaxed" [innerHTML]="ts.pick(item.summary, item.summary_sw)"></p>
                       <a [routerLink]="['/news', item.id]" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                         {{ ts.get('news.read_more') }} <i class="bi bi-arrow-right ms-1"></i>
                       </a>

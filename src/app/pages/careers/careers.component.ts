@@ -32,7 +32,7 @@ import Swal from 'sweetalert2';
                   <span class="badge bg-secondary text-white text-uppercase" style="font-size: 10px; letter-spacing:0.5px;">{{ j.type }}</span>
                 </div>
                 <p class="text-white-50 small mb-3">Location: {{ j.location }} | Department: {{ j.department }}</p>
-                <p class="text-white-50 small leading-relaxed mb-0">{{ j.description }}</p>
+                <p class="text-white-50 small leading-relaxed mb-0" [innerHTML]="j.description"></p>
               </div>
             }
             @if (jobs().length === 0) {

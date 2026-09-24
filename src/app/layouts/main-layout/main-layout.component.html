@@ -103,9 +103,7 @@
               <span class="fw-bold text-uppercase text-white" style="font-size: 1.05rem; letter-spacing: 0.5px;">{{ siteTitle() }}</span>
             </span>
           </div>
-          <p class="text-secondary small leading-relaxed">
-            {{ footerAboutText() }}
-          </p>
+          <p class="text-secondary small leading-relaxed" [innerHTML]="footerAboutText()"></p>
           <div class="social-links-footer d-flex gap-2 mt-4">
             <a [href]="socialFacebook()" target="_blank" class="btn btn-sm btn-outline-secondary rounded-circle"><i class="bi bi-facebook"></i></a>
             <a [href]="socialInstagram()" target="_blank" class="btn btn-sm btn-outline-secondary rounded-circle"><i class="bi bi-instagram"></i></a>

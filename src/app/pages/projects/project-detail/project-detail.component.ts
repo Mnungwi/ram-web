@@ -27,9 +27,7 @@ import { environment } from '../../../../environments/environment';
           <div class="row">
             <div class="col-lg-8">
               <h2 class="fw-bold mb-4 text-white">{{ ts.get('projectDetail.overview') }}</h2>
-              <p class="text-white-50 leading-relaxed mb-5 fs-5">
-                {{ ts.pick(project()!.description, project()!.description_sw) }}
-              </p>
+              <p class="text-white-50 leading-relaxed mb-5 fs-5" [innerHTML]="ts.pick(project()!.description, project()!.description_sw)"></p>
 
               <!-- Engineering Approach (per-project — admin can override on the Website Display section of Project Settings) -->
               <h4 class="fw-bold mt-5 mb-4 text-white">{{ ts.get('projectDetail.approach_title') }}</h4>

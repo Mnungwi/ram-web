@@ -25,10 +25,8 @@ import { TranslationService } from '../../../core/services/translation.service';
         <div class="container py-4">
           <div class="row justify-content-center">
             <div class="col-lg-8">
-              <p class="fs-5 leading-relaxed mb-4 text-dark font-weight-500">
-                {{ ts.pick(article()!.summary, article()!.summary_sw) }}
-              </p>
-              <p class="text-secondary leading-relaxed mb-5" style="white-space: pre-wrap;" *ngIf="article()!.content">{{ ts.pick(article()!.content, article()!.content_sw) }}</p>
+              <p class="fs-5 leading-relaxed mb-4 text-dark font-weight-500" [innerHTML]="ts.pick(article()!.summary, article()!.summary_sw)"></p>
+              <p class="text-secondary leading-relaxed mb-5" *ngIf="article()!.content" [innerHTML]="ts.pick(article()!.content, article()!.content_sw)"></p>
               
               <div class="border-top pt-4">
                 <a routerLink="/news" class="btn btn-outline-secondary rounded-pill px-4"><i class="bi bi-arrow-left me-2"></i>Back to News</a>

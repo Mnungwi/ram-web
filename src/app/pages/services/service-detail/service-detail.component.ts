@@ -25,12 +25,8 @@ import { TranslationService } from '../../../core/services/translation.service';
           <div class="row">
             <div class="col-lg-8">
               <h2 class="fw-bold mb-4 text-dark">Service Overview</h2>
-              <p class="text-secondary leading-relaxed mb-4">
-                {{ ts.pick(service()!.description, service()!.description_sw) }}
-              </p>
-              <p class="text-secondary leading-relaxed mb-5" *ngIf="overviewText()">
-                {{ overviewText() }}
-              </p>
+              <p class="text-secondary leading-relaxed mb-4" [innerHTML]="ts.pick(service()!.description, service()!.description_sw)"></p>
+              <p class="text-secondary leading-relaxed mb-5" *ngIf="overviewText()" [innerHTML]="overviewText()"></p>
 
               <h4 class="fw-bold mb-4 text-dark">Key Benefits</h4>
               <ul class="list-group list-group-flush mb-5">

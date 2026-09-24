@@ -64,7 +64,7 @@ import { TranslationService } from '../../core/services/translation.service';
                     <small class="text-white-50"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ ts.get('projects.location') }}: {{ p.location || 'Zanzibar' }}</small>
                   </div>
                   <h4 class="fw-bold mb-3 text-white" style="font-size:1.35rem; line-height:1.2;">{{ ts.pick(p.name, p.name_sw) }}</h4>
-                  <p class="text-white-50 small leading-relaxed mb-4 flex-grow-1">{{ ts.pick(p.description, p.description_sw) }}</p>
+                  <p class="text-white-50 small leading-relaxed mb-4 flex-grow-1" [innerHTML]="ts.pick(p.description, p.description_sw)"></p>
                   
                   <a [routerLink]="['/projects', p.id]" class="btn btn-sm btn-outline-light rounded-pill align-self-start px-4">
                     {{ ts.get('projects.view_details') }} <i class="bi bi-arrow-right ms-1 text-primary"></i>

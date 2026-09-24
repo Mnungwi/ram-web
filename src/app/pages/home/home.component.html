@@ -16,7 +16,7 @@
             <div class="col-lg-8 animate-text-container">
               <span class="badge bg-primary text-uppercase px-3 py-2 mb-3 fw-bold tracking-wider slide-up-in" style="font-size:12px">{{ ts.get('home.slider_badge') }}</span>
               <h1 class="display-3 fw-800 mb-3 slide-up-in" style="line-height: 1.1; font-family: var(--font-family-title);">{{ts.pick(s.title, s.title_sw)}}</h1>
-              <p class="fs-5 text-light mb-5 slide-up-in" style="max-width: 600px; font-weight: 300;">{{ts.pick(s.subtitle, s.subtitle_sw)}}</p>
+              <p class="fs-5 text-light mb-5 slide-up-in" style="max-width: 600px; font-weight: 300;" [innerHTML]="ts.pick(s.subtitle, s.subtitle_sw)"></p>
               <div class="d-flex gap-3 slide-up-in">
                 <a [routerLink]="s.primaryLink" class="btn btn-primary btn-lg rounded-pill px-4 shadow-lg">
                   {{ s.primaryBtn === 'Explore Services' ? ts.get('home.btn_services') : (s.primaryBtn === 'View Portfolio' ? ts.get('home.btn_portfolio') : s.primaryBtn) }}
@@ -112,7 +112,7 @@
                 <i class="bi {{svc.icon || 'bi-gear'}} fs-3"></i>
               </div>
               <h4 class="fw-bold mb-3">{{ts.pick(svc.title, svc.title_sw)}}</h4>
-              <p class="text-secondary small mb-4">{{ts.pick(svc.description, svc.description_sw)}}</p>
+              <p class="text-secondary small mb-4" [innerHTML]="ts.pick(svc.description, svc.description_sw)"></p>
               <a [routerLink]="['/services', svc.id]" class="btn btn-sm btn-outline-primary rounded-pill px-3">Read Details</a>
             </div>
           </div>
@@ -185,9 +185,8 @@
                   <small class="text-white-50"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ ts.get('projects.location') }}: {{p.location}}</small>
                 </div>
                 <h3 class="fw-bold text-white mb-2 project-title">{{ts.pick(p.name, p.name_sw)}}</h3>
-                <p class="project-desc text-white-50 small mb-0">
-                  {{ ts.pick(p.description, p.description_sw) || 'Premium infrastructure delivery including advanced structural work, civil works, and engineering excellence.' }}
-                </p>
+                <p class="project-desc text-white-50 small mb-0"
+                   [innerHTML]="ts.pick(p.description, p.description_sw) || 'Premium infrastructure delivery including advanced structural work, civil works, and engineering excellence.'"></p>
                 <a [routerLink]="['/projects', p.id]" class="btn btn-sm btn-primary rounded-pill px-4 align-self-start mt-3">
                   {{ ts.get('projects.view_details') }}
                 </a>
@@ -269,9 +268,7 @@
                 </button>
               </h2>
               <div class="accordion-collapse collapse" [class.show]="item.open()">
-                <div class="accordion-body text-secondary small bg-white">
-                  {{ts.pick(item.a, item.a_sw)}}
-                </div>
+                <div class="accordion-body text-secondary small bg-white" [innerHTML]="ts.pick(item.a, item.a_sw)"></div>
               </div>
             </div>
           </div>

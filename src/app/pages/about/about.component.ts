@@ -24,9 +24,7 @@ import { environment } from '../../../environments/environment';
         <div class="container py-4 text-center" style="max-width: 800px;">
           <span class="subtitle text-primary fw-bold text-uppercase d-block mb-2" style="letter-spacing: 2px;">{{ ts.get('about.who_title') }}</span>
           <h2 class="fw-bold mb-4 text-white">{{ ts.pick(companyName(), companyNameSw()) }}</h2>
-          <p class="text-white-50 fs-5 leading-relaxed">
-            {{ ts.pick(whoWeAre(), whoWeAreSw()) }}
-          </p>
+          <p class="text-white-50 fs-5 leading-relaxed" [innerHTML]="ts.pick(whoWeAre(), whoWeAreSw())"></p>
         </div>
       </section>
 
@@ -40,9 +38,7 @@ import { environment } from '../../../environments/environment';
                   <i class="bi bi-eye text-primary fs-2 me-3"></i>
                   <h3 class="fw-bold mb-0 text-white">{{ ts.get('about.vision_title') }}</h3>
                 </div>
-                <p class="text-white-50 leading-relaxed">
-                  {{ ts.pick(vision(), visionSw()) }}
-                </p>
+                <p class="text-white-50 leading-relaxed" [innerHTML]="ts.pick(vision(), visionSw())"></p>
               </div>
             </div>
             <div class="col-md-6 mb-4">
@@ -51,9 +47,7 @@ import { environment } from '../../../environments/environment';
                   <i class="bi bi-lightning text-secondary fs-2 me-3"></i>
                   <h3 class="fw-bold mb-0 text-white">{{ ts.get('about.mission_title') }}</h3>
                 </div>
-                <p class="text-white-50 leading-relaxed">
-                  {{ ts.pick(mission(), missionSw()) }}
-                </p>
+                <p class="text-white-50 leading-relaxed" [innerHTML]="ts.pick(mission(), missionSw())"></p>
               </div>
             </div>
           </div>
@@ -71,7 +65,7 @@ import { environment } from '../../../environments/environment';
               <span class="text-primary fw-bold text-uppercase d-block mb-2">{{ ts.get('about.leadership_msg') }}</span>
               <h2 class="fw-bold mb-3 text-white">{{ ts.get('about.md_title') }}</h2>
               <p class="text-white-50 fs-5 fst-italic leading-relaxed">
-                "{{ ts.pick(mdQuote(), mdQuoteSw()) }}"
+                "<span [innerHTML]="ts.pick(mdQuote(), mdQuoteSw())"></span>"
               </p>
               <h5 class="fw-bold mb-0 mt-4 text-white text-uppercase">{{ mdName() }}</h5>
               <small class="text-white-50">{{ ts.get('about.md_role') }}</small>
